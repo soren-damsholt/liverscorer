@@ -12,11 +12,11 @@ meld(
   unit = "US",
   creatinine_conversion_factor = 0.0113,
   bilirubin_conversion_factor = 0.0584,
-  creatinine_treshold_si = 200,
+  creatinine_threshold_si = 200,
   bilirubin_threshold_si = 360,
-  creatinine_treshold_us = 2.26,
+  creatinine_threshold_us = 2.26,
   bilirubin_threshold_us = 21.05,
-  inr_treshshold = 3
+  inr_threshshold = 3
 )
 }
 \arguments{
@@ -34,15 +34,15 @@ meld(
 
 \item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
 
-\item{creatinine_treshold_si}{Upper threshold for high creatinine (μmol/L), causing a warning if input is above (default = 200).}
+\item{creatinine_threshold_si}{Upper threshold for high creatinine (μmol/L), causing a warning if input is above (default = 200).}
 
 \item{bilirubin_threshold_si}{Upper threshold for high bilirubin (μmol/L), causing a warning if input is above (default = 360).}
 
-\item{creatinine_treshold_us}{Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).}
+\item{creatinine_threshold_us}{Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).}
 
 \item{bilirubin_threshold_us}{Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).}
 
-\item{inr_treshshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
+\item{inr_threshshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
 }
 \value{
 Function returns a calulated MELD value, rounded to nearest integer.
