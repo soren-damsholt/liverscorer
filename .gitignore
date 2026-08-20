@@ -50,4 +50,4 @@ rsconnect/
 
 # Other files
 inst/data_prep.R
-inst/nhanes_test.scv
+inst/nhanes_test.csv
