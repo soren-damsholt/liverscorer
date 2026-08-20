@@ -15,6 +15,7 @@
 #'    0.378 \times \log(Bilirubin)+
 #'    1.120\times \log(INR) + 0.643, digits = 10)}}
 #' 
+#' If one or more of the required input values are missing for an observation, the corresponding MELD values is returned as "NA".
 #' 
 #' @references Kamath PS, Wiesner RH, Malinchoc M, Kremers W, Therneau TM, Kosberg CL, D'Amico G, Dickson ER, Kim WR. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001 Feb;33(2):464-70. doi: 10.1053/jhep.2001.22172. PMID: 11172350.
 #'
@@ -77,6 +78,11 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
     warning("US units detected: some lab values are high, consider if input is correct?")
   }
   
+  # Locate missing values
+  missing <- is.na(creatinine) |
+                   is.na(bilirubin) |
+                   is.na(inr)
+  
   # Convert SI units to mg/dL
   if(unit == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor
@@ -93,11 +99,14 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
   bilirubin <- pmax(bilirubin, 1)
   inr <- pmax(inr, 1)
   
+  
   # Calculate meld
   meld <- round((0.957 * log(creatinine) +
      0.378 * log(bilirubin)+
      1.120 * log(inr) +
      0.643)*10, digits = 0)
+  
+  meld[missing] <- NA_real_
     
   return(meld)
 }

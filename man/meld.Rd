@@ -62,6 +62,8 @@ The MELD calculation follows this formula:
    0.957 \times \log(Creatinine) + 
    0.378 \times \log(Bilirubin)+
    1.120\times \log(INR) + 0.643, digits = 10)}}
+
+If one or more of the required input values are missing for an observation, the corresponding MELD values is returned as "NA".
 }
 \examples{
   # US units (mg/dL)

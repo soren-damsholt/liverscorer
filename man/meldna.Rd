@@ -80,6 +80,7 @@ The MELD-Na calculation follows two steps:
 }
 
 Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
+If one or more required input values are missing for an observation, the corresponding MELD-Na score is returned as "Na"
 
 The original MELD-Na model was described by Kim et al. (2008).
 This function implements the subsequent 2016 MELD-Na formulation

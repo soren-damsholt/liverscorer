@@ -68,5 +68,14 @@ test_that("Invalid dialysis setting produces an error",{
   )
 })
 
-
+test_that("Missing values produce NAs in vectors",{
+  result <- meld(creatinine = c(1, NA, 2),
+                 bilirubin = c(1, 2, 3),
+                 inr = c(1, 1.5, 2))
+  
+  expect_equal(length(result), 3)
+  expect_false(is.na(result[1]))
+  expect_true(is.na(result[2]))
+  expect_false(is.na(result[3]))
+})
 

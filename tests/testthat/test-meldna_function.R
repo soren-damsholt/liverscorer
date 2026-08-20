@@ -125,5 +125,15 @@ test_that("function calculates MELD-NA in accordance with verified source", {
 })
 
 
+test_that("MELD-Na explicitly handles missing values as NA", {
+  result <- meldna(c(1, 1.5, 2),
+                   c(1, 2, 3), 
+                   c(1, NA, 2.6),
+                   c(130, 135, 137))
+  expect_false(is.na(result[1]))
+  expect_true(is.na(result[2]))
+  expect_false(is.na(result[3]))
+})
+
 
 

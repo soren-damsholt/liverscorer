@@ -23,6 +23,7 @@
 #'    }
 #'    
 #' Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
+#' If one or more required input values are missing for an observation, the corresponding MELD-Na score is returned as "Na"
 #' 
 #' The original MELD-Na model was described by Kim et al. (2008).
 #' This function implements the subsequent 2016 MELD-Na formulation
@@ -108,6 +109,12 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "
     warning("US units detected: one or more lab values look unusual, consider if input is correct?")
   }
   
+  # Locate missing input values
+  missing <- is.na(creatinine) | 
+              is.na(bilirubin) |
+              is.na(inr) |
+              is.na(sodium)
+  
   # If unit == SI then convert to mg/dL
   if(unit == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor
@@ -134,11 +141,13 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "
             1.120 * log(inr) + 0.643, digits = 10) * 10
   
   # If MELD(i) > 11, then calculate MELDNa
-  index <- meldi > 11
+  index <- !is.na(meldi) & meldi > 11
   
   
   meldi[index] <- meldi[index] + 1.32 * (137 - sodium[index]) -
       ((0.033 * meldi[index]) * (137 - sodium[index]))
+  
+  meldi[missing] <- NA_real_
   
   round(meldi)
 }
