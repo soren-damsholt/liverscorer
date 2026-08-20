@@ -1,4 +1,23 @@
-#' Title Model of End-Stage Liver Disease (MELD) score
+#' Title Model for End-Stage Liver Disease (MELD) score
+#' 
+#' Calculates the Model for End-Stage Liver Disease (MELD).
+#' 
+#' @details
+#' The MELD score is calculated from s-Creatinine, s-Bilirubin and s-inr.
+#' Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
+#' Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
+#' If the patient has undertaken haemodialysis within 48 h of sample collection, the setting dialysis should be set to "yes", in which case creatinine is hardcoded to 4 (mg/dL).
+#' The MELD calculation follows this formula:
+#' \enumerate{
+#'  \deqn{
+#'  MELD = 10 \times round(
+#'    0.957 \times \log(Creatinine) + 
+#'    0.378 \times \log(Bilirubin)+
+#'    1.120\times \log(INR) + 0.643, digits = 10)}}
+#' 
+#' 
+#' @references Kamath PS, Wiesner RH, Malinchoc M, Kremers W, Therneau TM, Kosberg CL, D'Amico G, Dickson ER, Kim WR. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001 Feb;33(2):464-70. doi: 10.1053/jhep.2001.22172. PMID: 11172350.
+#'
 #'
 #' @param creatinine Serum creatinine in either mg/dL (US units) or μmol/L (SI units).
 #' @param bilirubin Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
@@ -11,9 +30,9 @@
 #' @param bilirubin_threshold_si Upper threshold for high bilirubin (μmol/L), causing a warning if input is above (default = 360).
 #' @param creatinine_threshold_us Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).
 #' @param bilirubin_threshold_us Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).
-#' @param inr_threshshold Upper threshold for INR, causing a warning if input is higher (default = 3.0).
+#' @param inr_threshold Upper threshold for INR, causing a warning if input is higher (default = 3.0).
 #'
-#' @returns Function returns a calulated MELD value, rounded to nearest integer.
+#' @returns A numeric vector of MELD scores, rounded to the nearest integer.
 #' @export
 #'
 #' @examples
@@ -36,7 +55,7 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
                  creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584,
                  creatinine_threshold_si = 200, bilirubin_threshold_si = 360,
                  creatinine_threshold_us = 2.26, bilirubin_threshold_us = 21.05, 
-                 inr_threshshold = 3.0){
+                 inr_threshold = 3.0){
   #Input check
   if(!unit %in% c("US", "SI")){
     stop("unit must be either 'US' or 'SI'")
@@ -47,13 +66,13 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
   # Safety check
   if(unit == "SI" && any(creatinine > creatinine_threshold_si |
                       bilirubin > bilirubin_threshold_si |
-                      inr > inr_threshshold,
+                      inr > inr_threshold,
                       na.rm = TRUE)){
     warning("SI units detected: some lab values are high, consider if input is correct?")
   }
   else if(unit == "US" && any(creatinine > creatinine_threshold_us |
                            bilirubin > bilirubin_threshold_us |
-                           inr > inr_threshshold,
+                           inr > inr_threshold,
                            na.rm = TRUE)){
     warning("US units detected: some lab values are high, consider if input is correct?")
   }

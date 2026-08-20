@@ -2,7 +2,7 @@
 % Please edit documentation in R/meld_score.R
 \name{meld}
 \alias{meld}
-\title{Title Model of End-Stage Liver Disease (MELD) score}
+\title{Title Model for End-Stage Liver Disease (MELD) score}
 \usage{
 meld(
   creatinine,
@@ -16,7 +16,7 @@ meld(
   bilirubin_threshold_si = 360,
   creatinine_threshold_us = 2.26,
   bilirubin_threshold_us = 21.05,
-  inr_threshshold = 3
+  inr_threshold = 3
 )
 }
 \arguments{
@@ -42,13 +42,26 @@ meld(
 
 \item{bilirubin_threshold_us}{Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).}
 
-\item{inr_threshshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
+\item{inr_threshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
 }
 \value{
-Function returns a calulated MELD value, rounded to nearest integer.
+A numeric vector of MELD scores, rounded to the nearest integer.
 }
 \description{
-Title Model of End-Stage Liver Disease (MELD) score
+Calculates the Model for End-Stage Liver Disease (MELD).
+}
+\details{
+The MELD score is calculated from s-Creatinine, s-Bilirubin and s-inr.
+Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
+Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
+If the patient has undertaken haemodialysis within 48 h of sample collection, the setting dialysis should be set to "yes", in which case creatinine is hardcoded to 4 (mg/dL).
+The MELD calculation follows this formula:
+\enumerate{
+\deqn{
+ MELD = 10 \times round(
+   0.957 \times \log(Creatinine) + 
+   0.378 \times \log(Bilirubin)+
+   1.120\times \log(INR) + 0.643, digits = 10)}}
 }
 \examples{
   # US units (mg/dL)
@@ -66,4 +79,7 @@ Title Model of End-Stage Liver Disease (MELD) score
   #If you are using SI units, you need to change the "unit" setting to "SI", 
   #which will then automatically convert your values before caluculating a MELD score.
   meld(creatinine = 120, bilirubin = 80, inr = 2.0, unit = "SI") # should return 23
+}
+\references{
+Kamath PS, Wiesner RH, Malinchoc M, Kremers W, Therneau TM, Kosberg CL, D'Amico G, Dickson ER, Kim WR. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001 Feb;33(2):464-70. doi: 10.1053/jhep.2001.22172. PMID: 11172350.
 }
