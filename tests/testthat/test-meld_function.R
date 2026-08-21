@@ -79,3 +79,14 @@ test_that("Missing values produce NAs in vectors",{
   expect_false(is.na(result[3]))
 })
 
+
+test_that("Creatinine is bounded between 1 and 4", {
+  result_low <- suppressWarnings(meld(0.5, 3, 2))
+  result_high <- suppressWarnings(meld(5, 3, 2))
+  
+  expected_low <- suppressWarnings(meld(1, 3, 2))
+  expected_high <- suppressWarnings(meld(4, 3, 2))
+  
+  expect_equal(result_low, expected_low)
+  expect_equal(result_high, expected_high)
+})

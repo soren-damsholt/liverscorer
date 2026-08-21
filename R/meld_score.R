@@ -4,7 +4,8 @@
 #' 
 #' @details
 #' The MELD score is calculated from s-Creatinine, s-Bilirubin and s-inr.
-#' Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
+#' Creatinine is bounded between 1 and 4 mg/dL, while bilirubin and INR are bounded below at 1. 
+#' Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
 #' Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
 #' If the patient has undertaken haemodialysis within 48 h of sample collection, the setting dialysis should be set to "yes", in which case creatinine is hardcoded to 4 (mg/dL).
 #' The MELD calculation follows this formula:
@@ -17,8 +18,13 @@
 #' 
 #' If one or more of the required input values are missing for an observation, the corresponding MELD values is returned as "NA".
 #' 
-#' @references Kamath PS, Wiesner RH, Malinchoc M, Kremers W, Therneau TM, Kosberg CL, D'Amico G, Dickson ER, Kim WR. A model to predict survival in patients with end-stage liver disease. Hepatology. 2001 Feb;33(2):464-70. doi: 10.1053/jhep.2001.22172. PMID: 11172350.
+#' @references
+#' Kamath PS, Wiesner RH, Malinchoc M, et al. A model to predict survival
+#' in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.
 #'
+#' Kim WR, Mannalithara A, Heimbach JK, et al. MELD 3.0: The Model for
+#' End-Stage Liver Disease Updated for the Modern Era. Gastroenterology.
+#' 2021;161(6):1887-1895.e4. doi:10.1053/j.gastro.2021.08.017.
 #'
 #' @param creatinine Serum creatinine in either mg/dL (US units) or μmol/L (SI units).
 #' @param bilirubin Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
@@ -39,7 +45,7 @@
 #' @examples
 #'   # US units (mg/dL)
 #'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, unit = "US", dialysis = "no") 
-#'   # should return 20
+#'   # 20
 #'   
 #'   # or simply:
 #'   meld(1.2, 3.0, 2.0)
@@ -47,7 +53,7 @@
 #'   #If the patient received dialysis at the time of sampling,
 #'   #creatinine is hard-coded to 4.0, regardless of measured value.
 #'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, unit = "US", dialysis = "yes") 
-#'   # should return 32
+#'   # 32
 #'   
 #'   #If you are using SI units, you need to change the "unit" setting to "SI", 
 #'   #which will then automatically convert your values before caluculating a MELD score.
@@ -95,7 +101,7 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
   }
   
   # Set MELD minimum values
-  creatinine <- pmax(creatinine, 1)
+  creatinine <- pmin(pmax(creatinine, 1), 4)
   bilirubin <- pmax(bilirubin, 1)
   inr <- pmax(inr, 1)
   

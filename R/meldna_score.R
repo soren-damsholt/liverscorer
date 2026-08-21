@@ -128,7 +128,7 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "
   }
   
   # Set lower bounds on measured values
-  creatinine <- pmax(creatinine, 1)
+  creatinine <- pmin(pmax(creatinine, 1), 4)
   bilirubin <- pmax(bilirubin, 1)
   inr <- pmax(inr, 1)
   

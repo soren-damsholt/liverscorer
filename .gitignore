@@ -51,3 +51,4 @@ rsconnect/
 # Other files
 inst/data_prep.R
 inst/nhanes_test.csv
+inst/advancedR.qmd
