@@ -28,21 +28,24 @@ meld3(
 
 \item{bilirubin}{Numeric vector of bilirubin as either µmol/L or mg/dL.}
 
-\item{inr}{International normalized ratio of coagulation factor III, VII and X.}
+\item{inr}{International normalized ratio (INR) of prothrombin time.}
 
 \item{sodium}{Numeric vector of sodium measured as either mmol/L or mEq/L}
 
 \item{albumin}{Numeric vector of albumin measured as either g/L or g/dL}
 
-\item{dialysis}{Setting of if the patient has received ≥2 dialysis treatments during the prior 7 days or continuous veno-venous hemodialysis during the prior 24h of sampling (Default = FALSE).}
+\item{dialysis}{Setting of if the patient has received ≥2 dialysis treatments during the 7 days preceding creatinine measurement or ≥24 hours of continuous veno-venous hemodialysis preceding the creatinine measurement (Default = FALSE).}
 
-\item{unit}{Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL and albumin will be converted to g/dL by multiplying their respective conversion factor. The conversion factors can be manually changed.}
+\item{unit}{Character specifying the units of the laboratory measurements.
+'"US"' expects creatinine and bilirubin in mg/dL and albumin in g/dL.
+'"SI"' expects creatinine and bilirubin in µmol/L and albumin in g/L.
+Sodium is entered in mmol/L (numerically equivalent to mEq/L) in each setting.}
 
 \item{creatinine_conversion_factor}{Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).}
 
 \item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
 
-\item{albumin_conversion_factor}{Factor multiplied to albumin to convert form g/L to g/dL (default = 0.1)}
+\item{albumin_conversion_factor}{Factor multiplied to albumin to convert from g/L to g/dL (default = 0.1)}
 }
 \value{
 Numeric vector of MELD 3.0 score rounded to nearest integer
@@ -52,10 +55,10 @@ Vectorized function for calculating the MELD 3.0 score.
 }
 \details{
 MELD 3.0. score is calcluated from sex, age, creatinine, bilirubin, INR, sodium and albumin.
-The calculation follow the formula provided by Kim et al. (2021) and the online version form mdcalc.com.
+The adult MELD 3.0 calculation follows Kim et al. (2021). Subjects aged 12-17 years, the sex-independent formulation used by the online calculator is applied.
 Therfore, creatinine is bounded between 1-3 mg/dL, and if the dialysis option is set, it is hardcoded as 3 mg/dL
 Bilirubin and INR have a lower bound of 1, so measurements below 1 are hardcoded to 1.
-Sodium is bounded between 125 and 137, and albumin is bounded between 1.5 and 3.5 mg/dL.
+Sodium is bounded between 125 and 137, and albumin is bounded between 1.5 and 3.5 g/dL.
 MELD 3.0 follow the following formula:
 \enumerate{
 \item If the patient age is ≥ 18, the following formula is used:
@@ -69,7 +72,7 @@ MELD 3.0 follow the following formula:
          (1.83 \times (3.5 - albumin) \times \log(creatinine)) + 6
    
    }
-\item If the patient age is < 18, the following formula is used:
+\item If the patient age is 12-17, the sex-independent formula is used:
 \deqn{MELD 3.0 = 4.56 \times \log(bilirubin) +
          0.82 \times (137 - sodium) -
          (0.24 \times (137 - sodium) \times \log(bilirubin)) + 
@@ -79,6 +82,7 @@ MELD 3.0 follow the following formula:
          (1.83 \times (3.5 - albumin) * \log(creatinine)) + 7.33}
 }
 
+MELD 3.0 is applicable to candidates aged 12 years or older, the function will stop if any age is below 12 years.
 Missing input values are automatically handled as NA values, and will produce NAs.
 }
 \examples{
@@ -92,16 +96,16 @@ Missing input values are automatically handled as NA values, and will produce NA
   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI")
   # 17
   
-  # If the patient has received haemodialysis, creatinine is hardcoded to 4.0. 
-  # This setting can be enabled by setting "dialysis" to "yes"
+  # If the patient meets the dialysis criteria, creatinine is set to 3.0 mg/dL.
+  # This setting can be enabled by setting "dialysis" to TRUE
   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
   # 29
   
   # If the patient is aged below 18, the sex-independent formula is applied
-  meld3(sex = "female", age = 16, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
-  # 29
-  meld3(sex = "male", age = 22, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
-  # 29
+  meld3(sex = "male", age = 16, creatinine = 112, bilirubin = 80, inr = 2.0, sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+  # 24
+  meld3(sex = "male", age = 22, creatinine = 112, bilirubin = 80, inr = 2.0, sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+  # 22
 }
 \references{
 Kim WR, Mannalithara A, Heimbach JK, Kamath PS, Asrani SK, Biggins SW, Wood NL, Gentry SE, Kwong AJ. MELD 3.0: The Model for End-Stage Liver Disease Updated for the Modern Era. Gastroenterology. 2021 Dec;161(6):1887-1895.e4. doi: 10.1053/j.gastro.2021.08.050. Epub 2021 Sep 3. PMID: 34481845; PMCID: PMC8608337.
