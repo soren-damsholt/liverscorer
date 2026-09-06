@@ -88,18 +88,24 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
     stop("sex must be either 'male' or 'female'")
   }
   
-  if(any(!is.numeric(age) & !is.na(age) |
-         !is.numeric(creatinine) & !is.na(creatinine) |
-         !is.numeric(bilirubin) & !is.na(bilirubin) |
-         !is.numeric(inr) & !is.na(inr) |
-         !is.numeric(albumin) & !is.na(albumin) |
-         !is.numeric(sodium) & !is.na(sodium))) {
-    stop("One or more of your vectors are not numeric")
+  numeric_inputs <- list(
+    age = age, 
+    creatinine = creatinine,
+    bilirubin = bilirubin,
+    inr = inr, 
+    sodium = sodium,
+    albumin = albumin
+  )
+  
+  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+    stop("Age, creatinine, bilirubin, INR, sodium and albumin must be numeric")
   }
   
-  if(!unit %in% c("US", "SI")) {
-    stop("unit must be either 'US' or 'SI'")
-  }
+  .check_scalar_choice(unit, c("US", "SI"), "unit")
+  
+  # if(!unit %in% c("US", "SI")) {
+  #   stop("unit must be either 'US' or 'SI'")
+  # }
   
   if(!all(age >= 12 | is.na(age))){
     stop("MELD 3.0 is applicable to candidates aged 12 years and older")
@@ -109,7 +115,7 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
      stop("dialysis must be TRUE or FALSE")
    }
  
-  # Vector length validation (i.e. require that each input has length 1 or a common max length).
+  # Vector length validation (i.e. require that each vector has exactly same length).
   # Except dialysis which may be scalar (if length == 1).
   input_lengths <- c(length(sex), 
                      length(age), 
