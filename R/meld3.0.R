@@ -58,25 +58,30 @@
 #' @export
 #'
 #' @examples
-#'   meld3(sex = "female", age = 22, creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, unit = "US")
+#'   meld3(sex = "female", age = 22, creatinine = 1, bilirubin = 1,
+#'    inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, unit = "US")
 #'   # 17
 #'   
 #'   # This can be simplified to:
 #'   meld3("female", 22, 1, 1, 1, 125, 3.6)
 #'   
 #'   # SI units can be applied and are automatically converted to mg/dL and g/dL 
-#'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI")
+#'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17,
+#'    inr = 1, sodium = 125, albumin = 36, unit = "SI")
 #'   # 17
 #'   
 #'   # If the patient meets the dialysis criteria, creatinine is set to 3.0 mg/dL.
 #'   # This setting can be enabled by setting "dialysis" to TRUE
-#'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1, sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
+#'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1,
+#'    sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
 #'   # 29
 #'   
 #'   # If the patient is aged below 18, the sex-independent formula is applied
-#'   meld3(sex = "male", age = 16, creatinine = 112, bilirubin = 80, inr = 2.0, sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+#'   meld3(sex = "male", age = 16, creatinine = 112, bilirubin = 80, inr = 2.0,
+#'    sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
 #'   # 24
-#'   meld3(sex = "male", age = 22, creatinine = 112, bilirubin = 80, inr = 2.0, sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+#'   meld3(sex = "male", age = 22, creatinine = 112, bilirubin = 80, inr = 2.0,
+#'    sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
 #'   # 22
 
 meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysis = FALSE, unit = "US",

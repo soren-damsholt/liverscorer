@@ -54,7 +54,8 @@
 #' @export 
 #'
 #' @examples
-#' lfi(grip1 = 25, grip2 = 26, grip3 = 27, time_to_stand = 10, side_balance = 10, semi_tandem = 10, tandem = 10, sex = "male")
+#' lfi(grip1 = 25, grip2 = 26, grip3 = 27, time_to_stand = 10, side_balance = 10,
+#'  semi_tandem = 10, tandem = 10, sex = "male")
 #' # 3.81
 #' 
 #' # Or simply:
@@ -62,11 +63,13 @@
 #' # 3.81
 #' 
 #' # If you have precalculated your mean this is also an option:
-#' lfi(grip_mean = 26, time_to_stand = 10, side_balance = 10, semi_tandem = 10, tandem = 10, sex = "male", grip_option = TRUE)
+#' lfi(grip_mean = 26, time_to_stand = 10, side_balance = 10, semi_tandem = 10,
+#'  tandem = 10, sex = "male", grip_option = TRUE)
 #' # 3.81
 #' 
 #' # This function is also vectorized:
-#' lfi(c(25, 30, 45), c(26, 28, 42), c(27, 32, 49), c(10, 8.3, 6), c(10, 10, 10), c(10, 10, 10), c(6, 9.5, 10), sex = c("male", "female", "male"))
+#' lfi(c(25, 30, 45), c(26, 28, 42), c(27, 32, 49), c(10, 8.3, 6), c(10, 10, 10),
+#'  c(10, 10, 10), c(6, 9.5, 10), sex = c("male", "female", "male"))
 #' # 3.97 2.87 2.32
 #' 
 lfi <- function(grip1 = NULL, grip2 = NULL, grip3 = NULL, time_to_stand,

@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(liverscorer)
+library(liverscoreR)
 
-test_check("liverscorer")
+test_check("liverscoreR")
