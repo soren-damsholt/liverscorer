@@ -1,9 +1,9 @@
-Package: liverscorer
-Title: What the Package Does (One Line, Title Case)
+Package: liverscoreR
+Title: Collection of Clinical Scores used in Hepatology
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+    person("Søren", "Damsholt", , "soerdm@clin.au.dk", role = c("aut", "cre"))
+Description: Collection of clinical scores used in hepatology.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
