@@ -2,6 +2,7 @@
 
 export(clif_ad)
 export(elf)
+export(fib4)
 export(lfi)
 export(meld)
 export(meld3)

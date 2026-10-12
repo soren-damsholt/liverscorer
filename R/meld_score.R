@@ -1,4 +1,4 @@
-#' Title Model for End-Stage Liver Disease (MELD) score
+#' Model for End-Stage Liver Disease (MELD) score
 #' 
 #' Calculates the Model for End-Stage Liver Disease (MELD).
 #' 

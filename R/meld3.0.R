@@ -1,4 +1,4 @@
-#' Title Model for End-stage Liver disease 3.0 (score)
+#' Model for End-stage Liver disease 3.0 (score)
 #' 
 #' Vectorized function for calculating the MELD 3.0 score.
 #' 

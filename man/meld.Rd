@@ -2,7 +2,7 @@
 % Please edit documentation in R/meld_score.R
 \name{meld}
 \alias{meld}
-\title{Title Model for End-Stage Liver Disease (MELD) score}
+\title{Model for End-Stage Liver Disease (MELD) score}
 \usage{
 meld(
   creatinine,

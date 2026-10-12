@@ -2,7 +2,7 @@
 % Please edit documentation in R/meld3.0.R
 \name{meld3}
 \alias{meld3}
-\title{Title Model for End-stage Liver disease 3.0 (score)}
+\title{Model for End-stage Liver disease 3.0 (score)}
 \usage{
 meld3(
   sex,

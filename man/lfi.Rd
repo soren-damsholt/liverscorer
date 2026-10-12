@@ -2,7 +2,7 @@
 % Please edit documentation in R/liver_frailty_index.R
 \name{lfi}
 \alias{lfi}
-\title{Title Liver Frailty Index Vectorized function for calculating the Liver
+\title{Liver Frailty Index Vectorized function for calculating the Liver
 Frailty Index (LFI) score}
 \usage{
 lfi(
@@ -54,7 +54,7 @@ Numeric vector of the liver frailty index calculated to the
 specified number of digits.
 }
 \description{
-Title Liver Frailty Index Vectorized function for calculating the Liver
+Liver Frailty Index Vectorized function for calculating the Liver
 Frailty Index (LFI) score
 }
 \details{

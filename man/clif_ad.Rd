@@ -2,7 +2,7 @@
 % Please edit documentation in R/clif_c_ad.R
 \name{clif_ad}
 \alias{clif_ad}
-\title{Title CLIF-C-AD score calculation}
+\title{CLIF-C-AD score calculation}
 \usage{
 clif_ad(age, creatinine, inr, wbc, sodium, digits = 0, unit = "US")
 }
@@ -27,7 +27,7 @@ calculating the CLIF-C-AD score.}
 Numeric vector of CLIF-C-AD score
 }
 \description{
-Title CLIF-C-AD score calculation
+CLIF-C-AD score calculation
 }
 \details{
 Additional details...

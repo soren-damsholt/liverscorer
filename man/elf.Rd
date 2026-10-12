@@ -2,7 +2,7 @@
 % Please edit documentation in R/elf.R
 \name{elf}
 \alias{elf}
-\title{Title Enhanced Liver Fibrosis (ELF) score}
+\title{Enhanced Liver Fibrosis (ELF) score}
 \usage{
 elf(HA, PIIINP, TIMP, digits = 2, platform = "centaur_xp")
 }
@@ -25,7 +25,7 @@ Options: "centaur_xp" (default) and "centaur_cp".}
 Numeric vector of ELF score
 }
 \description{
-Title Enhanced Liver Fibrosis (ELF) score
+Enhanced Liver Fibrosis (ELF) score
 }
 \details{
 This function calculates the ELF score based on direct measurements
@@ -49,7 +49,7 @@ NA values. Be sure your data is formatted correctly before calculating.
 \examples{
 ## Input vectors also calculate the score and returns a numeric vector of results.
 elf(HA = c(7, 8, 10), PIIINP = c(8, 8, 12), TIMP = c(9, 35, 29), platform = "centaur_xp")
-6.36 7.01 7.43
+# 6.36 7.01 7.43
 
 }
 \references{

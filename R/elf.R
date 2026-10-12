@@ -1,4 +1,4 @@
-#' Title Enhanced Liver Fibrosis (ELF) score
+#' Enhanced Liver Fibrosis (ELF) score
 #'
 #' @details This function calculates the ELF score based on direct measurements
 #'   of three biochemical markers of extracellular matrix turnover:
@@ -38,7 +38,7 @@
 #' @examples
 #' ## Input vectors also calculate the score and returns a numeric vector of results.
 #' elf(HA = c(7, 8, 10), PIIINP = c(8, 8, 12), TIMP = c(9, 35, 29), platform = "centaur_xp")
-#' 6.36 7.01 7.43
+#' # 6.36 7.01 7.43
 #' 
 elf <- function(HA, PIIINP, TIMP, digits = 2, platform = "centaur_xp"){
   

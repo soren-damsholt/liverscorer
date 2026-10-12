@@ -1,4 +1,4 @@
-#' Title CLIF-C-AD score calculation
+#' CLIF-C-AD score calculation
 #' @details
 #' Additional details...
 #' 

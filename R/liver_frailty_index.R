@@ -1,4 +1,4 @@
-#' Title Liver Frailty Index Vectorized function for calculating the Liver
+#' Liver Frailty Index Vectorized function for calculating the Liver
 #' Frailty Index (LFI) score
 #' @details The Liver Frailty Index (LFI) is calculated from three
 #' performance-based measures: grip strength, time to complete five chair

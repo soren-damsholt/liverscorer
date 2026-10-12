@@ -1,4 +1,4 @@
-#' Title Model for End-stage Liver Disease - Sodium score
+#' Model for End-stage Liver Disease - Sodium score
 #'
 #' Calculates the Model for End-Stage Liver Disease incorporating serum sodium (MELD-Na) score. 
 #' The calculation follows the 2016 MELD-Na formulation

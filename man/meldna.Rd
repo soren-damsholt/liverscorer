@@ -2,7 +2,7 @@
 % Please edit documentation in R/meldna_score.R
 \name{meldna}
 \alias{meldna}
-\title{Title Model for End-stage Liver Disease - Sodium score}
+\title{Model for End-stage Liver Disease - Sodium score}
 \usage{
 meldna(
   creatinine,
