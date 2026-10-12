@@ -13,13 +13,7 @@ meldna(
   dialysis = "no",
   creatinine_conversion_factor = 0.0113,
   bilirubin_conversion_factor = 0.0584,
-  creatinine_threshold_si = 200,
-  bilirubin_threshold_si = 360,
-  creatinine_threshold_us = 2.26,
-  bilirubin_threshold_us = 21.05,
-  sodium_upper_threshold = 160,
-  sodium_lower_threshold = 100,
-  inr_threshold = 3
+  digits = 0
 )
 }
 \arguments{
@@ -39,19 +33,7 @@ meldna(
 
 \item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
 
-\item{creatinine_threshold_si}{Upper threshold for high creatinine (μmol/L), causing a warning if input is above (default = 200).}
-
-\item{bilirubin_threshold_si}{Upper threshold for high bilirubin (μmol/L), causing a warning if input is above (default = 360).}
-
-\item{creatinine_threshold_us}{Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).}
-
-\item{bilirubin_threshold_us}{Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).}
-
-\item{sodium_upper_threshold}{Upper threshold for extremely high sodium measurements (default = 100)}
-
-\item{sodium_lower_threshold}{Lower threshold for extremely low sodium levels (default = 160)}
-
-\item{inr_threshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
+\item{digits}{Integer setting the number of digits the final score is rounded to (default = 0)}
 }
 \value{
 A numeric vector of MELD-Na scores rounded to the nearest integer
@@ -63,7 +45,7 @@ The calculation follows the 2016 MELD-Na formulation
 \details{
 The MELD-Na score is calculated from S-creatinine, S-bilirubin, INR and S-sodium.
 Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Sodium is bounded between
-125 and 137 Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
+125 and 137 Both US and SI units are applicable for this function. If SI units is selected, the units are automatically converted to mg/dl before calculation.
 The MELD-Na calculation follows two steps:
 \enumerate{
 \item MELD(i) is calculated as:
@@ -79,12 +61,11 @@ The MELD-Na calculation follows two steps:
      }
 }
 
-Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
 If one or more required input values are missing for an observation, the corresponding MELD-Na score is returned as "Na"
 
 The original MELD-Na model was described by Kim et al. (2008).
 This function implements the subsequent 2016 MELD-Na formulation
-adopted for liver allocation in the United States.
+adopted for livertransplant allocation in the United States.
 }
 \examples{
   meldna(creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, unit = "US", dialysis = "no") 

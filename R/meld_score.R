@@ -24,6 +24,8 @@
 #' Kim WR, Mannalithara A, Heimbach JK, et al. MELD 3.0: The Model for
 #' End-Stage Liver Disease Updated for the Modern Era. Gastroenterology.
 #' 2021;161(6):1887-1895.e4. doi:10.1053/j.gastro.2021.08.017.
+#' 
+#' @seealso [meldna()], [meld3()]
 #'
 #' @param creatinine Serum creatinine in either mg/dL (US units) or μmol/L (SI units).
 #' @param bilirubin Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
@@ -32,6 +34,7 @@
 #' @param unit Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.
 #' @param creatinine_conversion_factor Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).
 #' @param bilirubin_conversion_factor Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).
+#' @param digits Integer setting the number of digits the final score is rounded to (default = 0)
 #'
 #' @returns A numeric vector of MELD scores, rounded to the nearest integer.
 #' @export
@@ -53,7 +56,9 @@
 #'   #which will then automatically convert your values before caluculating a MELD score.
 #'   meld(creatinine = 120, bilirubin = 80, inr = 2.0, unit = "SI") # should return 23
 meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
-                 creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584){
+                 creatinine_conversion_factor = 0.0113,
+                 bilirubin_conversion_factor = 0.0584,
+                 digits = digits){
   #Input check
   if(!unit %in% c("US", "SI")){
     stop("unit must be either 'US' or 'SI'")
@@ -84,12 +89,12 @@ meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
   
   
   # Calculate meld
-  meld <- round((0.957 * log(creatinine) +
+  meld <- (0.957 * log(creatinine) +
      0.378 * log(bilirubin)+
      1.120 * log(inr) +
-     0.643)*10, digits = 0)
+     0.643)*10
   
   meld[missing] <- NA_real_
     
-  return(meld)
+  return(round(meld, digits = digits))
 }

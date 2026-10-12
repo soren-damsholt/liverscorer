@@ -2,8 +2,8 @@
 % Please edit documentation in R/liver_frailty_index.R
 \name{lfi}
 \alias{lfi}
-\title{Title Liver Frailty Index
-Vectorized function for calculating the Liver Frailty Index (LFI) score}
+\title{Title Liver Frailty Index Vectorized function for calculating the Liver
+Frailty Index (LFI) score}
 \usage{
 lfi(
   grip1 = NULL,
@@ -34,10 +34,11 @@ stance, from 0 to 10 seconds.}
 \item{semi_tandem}{Numeric vector of seconds maintaining the semi-tandem
 stance, from 0 to 10 seconds.}
 
-\item{tandem}{Numeric vector of seconds maintaining the tandem stance,
-from 0 to 10 seconds.}
+\item{tandem}{Numeric vector of seconds maintaining the tandem stance, from 0
+to 10 seconds.}
 
-\item{sex}{Character vector specifying either 'male' or 'female' for grip calculation.}
+\item{sex}{Character vector specifying either 'male' or 'female' for grip
+calculation.}
 
 \item{grip_mean}{Numeric vector of precalculated mean grip strength in kg.
 Used only when \code{grip_option = TRUE}.}
@@ -49,21 +50,22 @@ and \code{grip3} are averaged. If \code{TRUE}, \code{grip_mean} is used instead.
 used to round the returned LFI score. Default is 2.}
 }
 \value{
-Numeric vector of the liver frailty index calculated to the specified number of digits.
+Numeric vector of the liver frailty index calculated to the
+specified number of digits.
 }
 \description{
-Title Liver Frailty Index
-Vectorized function for calculating the Liver Frailty Index (LFI) score
+Title Liver Frailty Index Vectorized function for calculating the Liver
+Frailty Index (LFI) score
 }
 \details{
-The Liver Frailty Index (LFI) is calculated from three performance-based
-measures: grip strength, time to complete five chair stands, and balance
-time across three standing positions. Grip strength is measured in the
-dominant hand over three attempts and averaged. Each balance position is
-measured for a maximum of 10 seconds.
+The Liver Frailty Index (LFI) is calculated from three
+performance-based measures: grip strength, time to complete five chair
+stands, and balance time across three standing positions. Grip strength is
+measured in the dominant hand over three attempts and averaged. Each balance
+position is measured for a maximum of 10 seconds.
 
-Grip strength is sex-adjusted using the values used by the UCSF Liver
-Frailty Index calculator:
+Grip strength is sex-adjusted using the values used by the UCSF Liver Frailty
+Index calculator:
 \enumerate{
 \item Male:
 \deqn{\frac{avg\_grip - 34.175}{9.976}}
@@ -71,7 +73,8 @@ Frailty Index calculator:
 \deqn{\frac{avg\_grip - 21.863}{6.312}}
 }
 
-The LFI is then calculated following the formula provided by Lai et al. (2017):
+The LFI is then calculated following the formula provided by Lai et al.
+(2017):
 \deqn{
 LFI =
 -0.330 \times sex\text{-}adjusted\ grip +
@@ -79,11 +82,13 @@ LFI =
 -0.040 \times balance\ time + 6
 }
 
-Each balance measurement must be between 0 and 10 seconds. If the patient cannot complete all five chair stands within 60 seconds,
-'time_to_stand' should be entered as 0.
+Each balance measurement must be between 0 and 10 seconds. If the patient
+cannot complete all five chair stands within 60 seconds, 'time_to_stand'
+should be entered as 0.
 
 Missing patient-level inputs return 'NA' for the corresponding LFI score.
-Patient-level input vectors must all have the same length; scalar recycling of clinical measurements is not performed.
+Patient-level input vectors must all have the same length; scalar recycling
+of clinical measurements is not performed.
 }
 \examples{
 lfi(grip1 = 25, grip2 = 26, grip3 = 27, time_to_stand = 10, side_balance = 10,
@@ -106,5 +111,9 @@ lfi(c(25, 30, 45), c(26, 28, 42), c(27, 32, 49), c(10, 8.3, 6), c(10, 10, 10),
 
 }
 \references{
-Lai JC, Covinsky KE, Dodge JL, Boscardin WJ, Segev DL, Roberts JP, Feng S. Development of a novel frailty index to predict mortality in patients with end-stage liver disease. Hepatology. 2017 Aug;66(2):564-574. doi: 10.1002/hep.29219. Epub 2017 Jun 28. PMID: 28422306; PMCID: PMC5519430.
+Lai JC, Covinsky KE, Dodge JL, Boscardin WJ, Segev DL, Roberts
+JP, Feng S. Development of a novel frailty index to predict mortality in
+patients with end-stage liver disease. Hepatology. 2017 Aug;66(2):564-574.
+doi: 10.1002/hep.29219. Epub 2017 Jun 28. PMID: 28422306; PMCID:
+PMC5519430.
 }

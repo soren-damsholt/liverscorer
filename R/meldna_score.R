@@ -6,7 +6,7 @@
 #' @details
 #' The MELD-Na score is calculated from S-creatinine, S-bilirubin, INR and S-sodium.
 #' Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Sodium is bounded between
-#' 125 and 137 Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
+#' 125 and 137 Both US and SI units are applicable for this function. If SI units is selected, the units are automatically converted to mg/dl before calculation.
 #' The MELD-Na calculation follows two steps:
 #' \enumerate{
 #'    \item MELD(i) is calculated as:
@@ -22,13 +22,11 @@
 #'      }
 #'    }
 #'    
-#' Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
 #' If one or more required input values are missing for an observation, the corresponding MELD-Na score is returned as "Na"
 #' 
 #' The original MELD-Na model was described by Kim et al. (2008).
 #' This function implements the subsequent 2016 MELD-Na formulation
-#' adopted for liver allocation in the United States.
-#' 
+#' adopted for livertransplant allocation in the United States.
 #' 
 #' @references
 #' Kim WR, Biggins SW, Kremers WK, Wiesner RH, Kamath PS, Benson JT,
@@ -49,13 +47,7 @@
 #' @param dialysis Parameter setting if the patient is on hemodialysis at the time of measurement (default = "no"), if yes, then creatinine is hard-coded to 4.0 mg/dL before calculation.
 #' @param creatinine_conversion_factor Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).
 #' @param bilirubin_conversion_factor Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).
-#' @param creatinine_threshold_si Upper threshold for high creatinine (μmol/L), causing a warning if input is above (default = 200).
-#' @param bilirubin_threshold_si Upper threshold for high bilirubin (μmol/L), causing a warning if input is above (default = 360).
-#' @param creatinine_threshold_us Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).
-#' @param bilirubin_threshold_us Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).
-#' @param sodium_upper_threshold Upper threshold for extremely high sodium measurements (default = 100)
-#' @param sodium_lower_threshold Lower threshold for extremely low sodium levels (default = 160)
-#' @param inr_threshold Upper threshold for INR, causing a warning if input is higher (default = 3.0).
+#' @param digits Integer setting the number of digits the final score is rounded to (default = 0)
 #'
 #' @returns A numeric vector of MELD-Na scores rounded to the nearest integer
 #' @export
@@ -78,35 +70,23 @@
 #'   
 meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "no",
                    creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584,
-                   creatinine_threshold_si = 200, bilirubin_threshold_si = 360,
-                   creatinine_threshold_us = 2.26, bilirubin_threshold_us = 21.05,
-                   sodium_upper_threshold = 160, sodium_lower_threshold = 100,
-                   inr_threshold = 3.0){
+                   digits = 0){
   
   # Catch if unit or dialysis is formatted wrong
-  if(!unit %in% c("US", "SI")){
-    stop("unit must be either 'US' or 'SI'")
-  }
-  if(!dialysis %in% c("yes", "no")){
-    stop("dialysis must be either 'yes' or 'no'")
-  }
+  .check_scalar_choice(unit, c("SI", "US"), "unit")
   
-  # Warning if the user give extreme values 
-  if(unit == "SI" && any(creatinine > creatinine_threshold_si |
-                         bilirubin > bilirubin_threshold_si |
-                         inr > inr_threshold | 
-                         sodium > sodium_upper_threshold |
-                         sodium < sodium_lower_threshold,
-                         na.rm = TRUE)){
-    warning("SI units detected: one or more lab values look unusual, consider if input is correct?")
-  }
-  else if(unit == "US" && any(creatinine > creatinine_threshold_us |
-                              bilirubin > bilirubin_threshold_us |
-                              inr > inr_threshold |
-                              sodium > sodium_upper_threshold |
-                              sodium < sodium_lower_threshold,
-                              na.rm = TRUE)){
-    warning("US units detected: one or more lab values look unusual, consider if input is correct?")
+  .check_scalar_choice(dialysis, c("yes", "no"), "dialysis")
+  
+  # Catch if numeric values are non-numeric:
+  numeric_inputs <- list(
+    creatinine = creatinine,
+    bilirubin = bilirubin,
+    inr = inr,
+    sodium = sodium
+  )
+  
+  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+    stop("Creainine, inr, bilirubin and sodium must be numeric")
   }
   
   # Locate missing input values
@@ -149,5 +129,5 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "
   
   meldi[missing] <- NA_real_
   
-  round(meldi)
+  round(meldi, digits = digits)
 }

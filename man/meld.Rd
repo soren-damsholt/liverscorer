@@ -11,7 +11,8 @@ meld(
   dialysis = "no",
   unit = "US",
   creatinine_conversion_factor = 0.0113,
-  bilirubin_conversion_factor = 0.0584
+  bilirubin_conversion_factor = 0.0584,
+  digits = digits
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ meld(
 \item{creatinine_conversion_factor}{Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).}
 
 \item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
+
+\item{digits}{Integer setting the number of digits the final score is rounded to (default = 0)}
 }
 \value{
 A numeric vector of MELD scores, rounded to the nearest integer.
@@ -74,4 +77,7 @@ in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.
 Kim WR, Mannalithara A, Heimbach JK, et al. MELD 3.0: The Model for
 End-Stage Liver Disease Updated for the Modern Era. Gastroenterology.
 2021;161(6):1887-1895.e4. doi:10.1053/j.gastro.2021.08.017.
+}
+\seealso{
+\code{\link[=meldna]{meldna()}}, \code{\link[=meld3]{meld3()}}
 }
