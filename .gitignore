@@ -55,3 +55,6 @@ inst/advancedR.qmd
 inst/advancedR.html
 inst/advancedR_files/
 inst/images/
+.Rproj.user
+.DS_Store
+.quarto
