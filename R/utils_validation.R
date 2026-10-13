@@ -19,3 +19,20 @@
   }
 }
 
+.check_logical <- function(x, name, allow_na = FALSE) {
+  if(!is.logical(x)){
+    stop(sprintf("%s must be TRUE or FALSE",
+                 name))
+    }
+  if(!allow_na && anyNA(x)){
+    stop(sprintf("%s must be TRUE or FALSE",
+                 name))
+  }
+}
+
+.check_scalar_or_length <- function(x, n, name){
+  if(!length(x) %in% c(1L, n)){
+    stop(sprintf("%s must have length 1 or match the patient-level input length",
+                 name))
+  }
+}

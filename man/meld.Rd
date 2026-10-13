@@ -2,7 +2,7 @@
 % Please edit documentation in R/meld_score.R
 \name{meld}
 \alias{meld}
-\title{Title Model for End-Stage Liver Disease (MELD) score}
+\title{Model for End-Stage Liver Disease (MELD) score}
 \usage{
 meld(
   creatinine,
@@ -12,11 +12,7 @@ meld(
   unit = "US",
   creatinine_conversion_factor = 0.0113,
   bilirubin_conversion_factor = 0.0584,
-  creatinine_threshold_si = 200,
-  bilirubin_threshold_si = 360,
-  creatinine_threshold_us = 2.26,
-  bilirubin_threshold_us = 21.05,
-  inr_threshold = 3
+  digits = digits
 )
 }
 \arguments{
@@ -34,15 +30,7 @@ meld(
 
 \item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
 
-\item{creatinine_threshold_si}{Upper threshold for high creatinine (μmol/L), causing a warning if input is above (default = 200).}
-
-\item{bilirubin_threshold_si}{Upper threshold for high bilirubin (μmol/L), causing a warning if input is above (default = 360).}
-
-\item{creatinine_threshold_us}{Upper threshold for high creatinine (mg/dL), causing a warning if input is higher (default = 2.26).}
-
-\item{bilirubin_threshold_us}{Upper threshold for high bilirubin (mg/dL), causing a warning if input is higher (default = 21.05).}
-
-\item{inr_threshold}{Upper threshold for INR, causing a warning if input is higher (default = 3.0).}
+\item{digits}{Integer setting the number of digits the final score is rounded to (default = 0)}
 }
 \value{
 A numeric vector of MELD scores, rounded to the nearest integer.
@@ -54,7 +42,6 @@ Calculates the Model for End-Stage Liver Disease (MELD).
 The MELD score is calculated from s-Creatinine, s-Bilirubin and s-inr.
 Creatinine is bounded between 1 and 4 mg/dL, while bilirubin and INR are bounded below at 1.
 Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
-Extreme outliers will flag a warning from the package, these can manually be set higher or lower by the user.
 If the patient has undertaken haemodialysis within 48 h of sample collection, the setting dialysis should be set to "yes", in which case creatinine is hardcoded to 4 (mg/dL).
 The MELD calculation follows this formula:
 \enumerate{
@@ -90,4 +77,7 @@ in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.
 Kim WR, Mannalithara A, Heimbach JK, et al. MELD 3.0: The Model for
 End-Stage Liver Disease Updated for the Modern Era. Gastroenterology.
 2021;161(6):1887-1895.e4. doi:10.1053/j.gastro.2021.08.017.
+}
+\seealso{
+\code{\link[=meldna]{meldna()}}, \code{\link[=meld3]{meld3()}}
 }

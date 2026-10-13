@@ -82,42 +82,21 @@ test_that("Creatinine, bilirubin and INR are bounded at 1", {
 test_that("Invalid unit produces an error", {
   expect_error(
     meldna(1, 1, 1, 138, unit = "Us"),
-    "unit must be either 'US' or 'SI'"
+    "unit must be one of: SI, US"
   )
 })
 
 test_that("Invalid dialysis setting produces an error", {
   expect_error(
     meldna(1, 1, 1, 138, dialysis = "mnjaeh"),
-    "dialysis must be either 'yes' or 'no'"
-  )
-})
-
-test_that("Extreme values generate warnings (US)", {
-  expect_warning(
-    meldna(
-      creatinine = 4, bilirubin = 1, 
-      inr = 1, sodium = 138,
-      unit = "US"
-    ),
-    "one or more lab values look unusual"
-  )
-})
-
-test_that("Extreme values generate warnings (SI)", {
-  expect_warning(
-    meldna(creatinine = 300,
-           bilirubin = 90,
-           inr = 1, 
-           sodium = 137,
-           unit = "SI"),
-    "one or more lab values look unusual"
+    "dialysis must be one of: yes, no"
   )
 })
 
 # Values independently verified against MDCalc on 2026-08-20.
 test_that("function calculates MELD-NA in accordance with verified source", {
-  result_si <- meldna(creatinine = 130, bilirubin = 90, inr = 2.0, sodium = 127, unit = "SI")
+  result_si <- meldna(creatinine = 130, bilirubin = 90, inr = 2.0,
+                      sodium = 127, unit = "SI")
   result_us <- meldna(2, 1, 2, 128)
   
   expect_equal(result_si, 29)
