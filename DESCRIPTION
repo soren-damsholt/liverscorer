@@ -2,9 +2,11 @@ Package: liverscoreR
 Title: Collection of Clinical Scores used in Hepatology
 Version: 0.0.0.9000
 Authors@R: 
-    person("Søren", "Damsholt", , "soerdm@clin.au.dk", role = c("aut", "cre"),
-            comment = c(ORCHID = "0009-0003-7713-8454"))
-Description: A data package that provides fully vectorized functions of clinical scores commonly used for research in hepatology.
+    person("Søren", "Damsholt", "soerdm@clin.au.dk",
+          role = c("aut", "cre"),
+          comment = c(ORCHID = "0009-0003-7713-8454"))
+Description: A data package that provides fully vectorized functions of
+      clinical scores commonly used for research in hepatology. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -14,3 +16,5 @@ Suggests:
 Config/testthat/edition: 3
 Language: en-US
 Config/roxygen2/version: 8.1.0
+URL: https://github.com/soren-damsholt/liverscorer
+BugReports: https://github.com/soren-damsholt/liverscorer/issues
