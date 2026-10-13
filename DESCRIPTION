@@ -2,9 +2,9 @@ Package: liverscoreR
 Title: Collection of Clinical Scores used in Hepatology
 Version: 0.0.0.9000
 Authors@R: 
-    person("Søren", "Damsholt", "soerdm@clin.au.dk",
+    person("Søren", "Damsholt", , "soerdm@clin.au.dk",
           role = c("aut", "cre"),
-          comment = c(ORCHID = "0009-0003-7713-8454"))
+          comment = c(ORCID = "0009-0003-7713-8454"))
 Description: A data package that provides fully vectorized functions of
       clinical scores commonly used for research in hepatology. 
 License: GPL (>= 3)
