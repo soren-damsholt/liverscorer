@@ -116,9 +116,7 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
     stop("MELD 3.0 is applicable to candidates aged 12 years and older")
   }
   
-  if(!is.logical(dialysis) || anyNA(dialysis)){
-     stop("dialysis must be TRUE or FALSE")
-   }
+  .check_logical(dialysis, "dialysis")
  
   # Vector length validation (i.e. require that each vector has exactly same length).
   # Except dialysis which may be scalar (if length == 1).
