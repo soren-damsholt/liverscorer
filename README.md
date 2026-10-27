@@ -1,7 +1,5 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# liverscoreR
+# liverscoreR <a href="https://github.com/soren-damsholt/liverscoreR"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 [![R-CMD-check](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
@@ -82,26 +80,26 @@ meld_data %>%
                       inr = inr, dialysis = FALSE,
                       unit = "SI"))
 #>    creatinine bilirubin inr meld meld2
-#> 1         134       115   2   25    25
-#> 2          98        55   1   12    12
-#> 3          33        36   2   17    17
-#> 4          62        46   2   18    18
-#> 5         143        76   1   17    17
-#> 6          58       119   1   14    14
-#> 7         148        78   1   17    17
-#> 8          52        19   2   15    15
-#> 9          50        96   2   21    21
-#> 10         84        40   2   17    17
-#> 11          6        67   2   19    19
-#> 12        146       103   2   26    26
-#> 13         31        53   2   18    18
-#> 14        119        34   1   12    12
-#> 15         74        54   1   11    11
-#> 16         44        51   1   11    11
-#> 17         97       101   2   22    22
-#> 18         47        84   2   20    20
-#> 19         78        65   2   19    19
-#> 20          3        12   1    6     6
+#> 1           4        64   1   11    11
+#> 2          64        55   1   11    11
+#> 3         122        45   2   21    21
+#> 4          30         1   1    6     6
+#> 5           6        27   2   16    16
+#> 6          43        73   2   20    20
+#> 7          57        59   2   19    19
+#> 8         130       120   2   25    25
+#> 9         133        60   1   15    15
+#> 10         35        32   1    9     9
+#> 11          3        95   2   21    21
+#> 12         56        54   1   11    11
+#> 13        131        84   1   16    16
+#> 14         79         5   2   14    14
+#> 15         74        81   1   12    12
+#> 16         75        34   2   17    17
+#> 17         88       107   2   21    21
+#> 18         24        85   1   12    12
+#> 19         86       117   2   21    21
+#> 20         58        10   2   14    14
 
 
 ## You will notice that here dialysis is a scalar set to "no". However you can also pass a vector of "yes" and "no" per subject in case you have that information. Several functions have buildt in possibility for using binary setting as both vectors and scalars. See documentation for the specific functions.
@@ -111,24 +109,24 @@ meld_data %>%
          meld2 = meld(creatinine, bilirubin, inr, dialysis = dialysis,
                      unit = "SI"))
 #>    creatinine bilirubin inr meld dialysis meld2
-#> 1         134       115   2   25    FALSE    25
-#> 2          98        55   1   12    FALSE    12
-#> 3          33        36   2   17     TRUE    30
-#> 4          62        46   2   18    FALSE    18
-#> 5         143        76   1   17    FALSE    17
-#> 6          58       119   1   14     TRUE    27
-#> 7         148        78   1   17    FALSE    17
-#> 8          52        19   2   15     TRUE    28
-#> 9          50        96   2   21     TRUE    34
-#> 10         84        40   2   17     TRUE    31
-#> 11          6        67   2   19    FALSE    19
-#> 12        146       103   2   26     TRUE    34
-#> 13         31        53   2   18    FALSE    18
-#> 14        119        34   1   12    FALSE    12
-#> 15         74        54   1   11     TRUE    24
-#> 16         44        51   1   11    FALSE    11
-#> 17         97       101   2   22    FALSE    22
-#> 18         47        84   2   20    FALSE    20
-#> 19         78        65   2   19     TRUE    33
-#> 20          3        12   1    6     TRUE    20
+#> 1           4        64   1   11    FALSE    11
+#> 2          64        55   1   11    FALSE    11
+#> 3         122        45   2   21     TRUE    31
+#> 4          30         1   1    6    FALSE     6
+#> 5           6        27   2   16     TRUE    29
+#> 6          43        73   2   20    FALSE    20
+#> 7          57        59   2   19    FALSE    19
+#> 8         130       120   2   25     TRUE    35
+#> 9         133        60   1   15     TRUE    24
+#> 10         35        32   1    9    FALSE     9
+#> 11          3        95   2   21    FALSE    21
+#> 12         56        54   1   11     TRUE    24
+#> 13        131        84   1   16    FALSE    16
+#> 14         79         5   2   14    FALSE    14
+#> 15         74        81   1   12    FALSE    12
+#> 16         75        34   2   17    FALSE    17
+#> 17         88       107   2   21     TRUE    34
+#> 18         24        85   1   12     TRUE    26
+#> 19         86       117   2   21    FALSE    21
+#> 20         58        10   2   14     TRUE    27
 ```

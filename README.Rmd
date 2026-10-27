@@ -2,7 +2,6 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
@@ -13,7 +12,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# liverscoreR
+# liverscoreR <a href="https://github.com/soren-damsholt/liverscoreR"><img src="man/figures/logo.png" align="right" height="138" /></a>
 
 [![R-CMD-check](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml) [![Codecov test coverage](https://codecov.io/gh/soren-damsholt/liverscorer/graph/badge.svg)](https://app.codecov.io/gh/soren-damsholt/liverscorer)
 
