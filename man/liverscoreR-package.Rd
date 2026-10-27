@@ -8,6 +8,14 @@
 \description{
 A data package that provides fully vectorized functions of clinical scores commonly used for research in hepatology.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/soren-damsholt/liverscorer}
+  \item Report bugs at \url{https://github.com/soren-damsholt/liverscorer/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Søren Damsholt \email{soerdm@clin.au.dk} (ORCHID: 0009-0003-7713-8454)
 
