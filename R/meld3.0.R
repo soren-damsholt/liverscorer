@@ -108,10 +108,6 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
   
   .check_scalar_choice(unit, c("US", "SI"), "unit")
   
-  # if(!unit %in% c("US", "SI")) {
-  #   stop("unit must be either 'US' or 'SI'")
-  # }
-  
   if(!all(age >= 12 | is.na(age))){
     stop("MELD 3.0 is applicable to candidates aged 12 years and older")
   }
@@ -142,8 +138,6 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
     stop("dialysis must have length 1 or the same length as the input vectors")
   }
   
-
-
   
   # Missing values
   missing <- is.na(sex) |

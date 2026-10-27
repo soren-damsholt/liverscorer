@@ -68,14 +68,14 @@
 #'   meldna(120, 80, 2, 125, unit = "SI", dialysis = "yes")
 #'   # 36
 #'   
-meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "no",
+meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = FALSE,
                    creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584,
                    digits = 0){
   
   # Catch if unit or dialysis is formatted wrong
   .check_scalar_choice(unit, c("SI", "US"), "unit")
   
-  .check_scalar_choice(dialysis, c("yes", "no"), "dialysis")
+  .check_logical(dialysis, "dialysis")
   
   # Catch if numeric values are non-numeric:
   numeric_inputs <- list(
@@ -103,9 +103,7 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = "
   }
   
   # If dialysis == yes, then hardcode creatinine to 4.0 mg/dL
-  if(dialysis == "yes"){
-    creatinine <- 4.0
-  }
+  creatinine[dialysis] <- 4.0
   
   # Set lower bounds on measured values
   creatinine <- pmin(pmax(creatinine, 1), 4)

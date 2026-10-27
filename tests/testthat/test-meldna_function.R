@@ -1,7 +1,7 @@
 test_that("MELD-Na calculates correctly", {
   result <- meldna(
     creatinine = 2, bilirubin = 3, inr = 2, sodium = 140,
-    unit = "US", dialysis = "no")
+    unit = "US", dialysis = FALSE)
   expect_equal(result, 25)
 })
 
@@ -33,9 +33,9 @@ test_that("MELD(i) <= 11 is not adjusted for sodium", {
 
 test_that("Dialysis sets creatinine to 4", {
   result <- meldna(creatinine = 1, 1, 1, 137,
-                   dialysis = "yes")
-  expected <- suppressWarnings(meldna(creatinine = 4, 1, 1, 137,
-                     dialysis = "no"))
+                   dialysis = TRUE)
+  expected <- meldna(creatinine = 4, 1, 1, 137,
+                     dialysis = FALSE)
   
   expect_equal(result, expected)
 })
@@ -89,7 +89,7 @@ test_that("Invalid unit produces an error", {
 test_that("Invalid dialysis setting produces an error", {
   expect_error(
     meldna(1, 1, 1, 138, dialysis = "mnjaeh"),
-    "dialysis must be one of: yes, no"
+    "dialysis must be TRUE or FALSE"
   )
 })
 
