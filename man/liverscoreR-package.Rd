@@ -6,6 +6,8 @@
 \alias{liverscoreR-package}
 \title{liverscoreR: Collection of Clinical Scores used in Hepatology}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 A data package that provides fully vectorized functions of clinical scores commonly used for research in hepatology.
 }
 \seealso{

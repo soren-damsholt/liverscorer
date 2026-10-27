@@ -30,7 +30,7 @@
 #' @param creatinine Serum creatinine in either mg/dL (US units) or μmol/L (SI units).
 #' @param bilirubin Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
 #' @param inr International normalized ratio of coagulation factor II, VII and X.
-#' @param dialysis Parameter setting if the patient is on hemodialysis at the time of measurement (default = "no"), if yes, then creatinine is hard-coded to 4.0 mg/dL before calculation.
+#' @param dialysis Logical parameter setting if the patient is on hemodialysis at the time of measurement (default = FALSE), if TRUE, then creatinine is hard-coded to 4.0 mg/dL before calculation.
 #' @param units Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.
 #' @param creatinine_conversion_factor Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).
 #' @param bilirubin_conversion_factor Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).

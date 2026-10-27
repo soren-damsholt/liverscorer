@@ -10,7 +10,7 @@ meldna(
   inr,
   sodium,
   unit = "US",
-  dialysis = "no",
+  dialysis = FALSE,
   creatinine_conversion_factor = 0.0113,
   bilirubin_conversion_factor = 0.0584,
   digits = 0
@@ -27,7 +27,7 @@ meldna(
 
 \item{unit}{Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.}
 
-\item{dialysis}{Parameter setting if the patient is on hemodialysis at the time of measurement (default = "no"), if yes, then creatinine is hard-coded to 4.0 mg/dL before calculation.}
+\item{dialysis}{Logical parameter setting if the patient is on hemodialysis at the time of measurement (default = FALSE), if TRUE, then creatinine is hard-coded to 4.0 mg/dL before calculation.}
 
 \item{creatinine_conversion_factor}{Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).}
 
@@ -68,19 +68,19 @@ This function implements the subsequent 2016 MELD-Na formulation
 adopted for livertransplant allocation in the United States.
 }
 \examples{
-  meldna(creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, unit = "US", dialysis = "no") 
+  meldna(creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, unit = "US", dialysis = FALSE) 
   # 6. 
   
   # This can be simplified to:
   meldna(1, 1, 1, 125)
   
   # SI units can be applied and are automatically converted to mg/dL
-  meldna(120, 80, 2, 125, unit = "SI", dialysis = "no")
+  meldna(120, 80, 2, 125, unit = "SI", dialysis = FALSE)
   # 30
   
   # If the patient has received haemodialysis, creatinine is hardcoded to 4.0. 
-  # This setting can be enabled by setting "dialysis" to "yes"
-  meldna(120, 80, 2, 125, unit = "SI", dialysis = "yes")
+  # This setting can be enabled by setting "dialysis" to TRUE
+  meldna(120, 80, 2, 125, unit = "SI", dialysis = TRUE)
   # 36
   
 }

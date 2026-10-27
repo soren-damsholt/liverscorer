@@ -38,7 +38,8 @@ pak::pak("soren-damsholt/liverscorer")
 
 ## Example
 
-This package contains several
+The functions can easily be applied to your data to calculate a severity
+score:
 
 ``` r
 library(liverscoreR)
