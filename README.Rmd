@@ -58,7 +58,7 @@ lfi(grip1 = 23, grip2 = 25, grip3 = 22, time_to_stand = 14, side_balance = 10,
     semi_tandem = 10, tandem = 7, sex = "male")
 
 ## However it can also work with large vectors.
-
+set.seed(123456)
 meld_data <- data.frame(creatinine = sample(150, 20),
            bilirubin = sample(120, 20),
            inr = sample(2.5, 20, replace = TRUE))
