@@ -1,5 +1,6 @@
 test_that("Testing that meld score calculates correctly (US + no dialysis)", {
-  calculated <- meld(creatinine = 1.2, bilirubin = 5, inr = 2.0, unit = "US", dialysis = "no")
+  calculated <- meld(creatinine = 1.2, bilirubin = 5, inr = 2.0,
+                     units = "US", dialysis = FALSE)
   expected  <- round((0.957 * log(1.2) +
                        0.378 * log(5) +
                        1.120 * log(2) +
@@ -9,7 +10,8 @@ test_that("Testing that meld score calculates correctly (US + no dialysis)", {
 })
 
 test_that("Testing that meld score calculates correctly (US + dialysis)", {
-  calculated <- meld(creatinine = 1.2, bilirubin = 5, inr = 2.0, unit = "US", dialysis = "yes")
+  calculated <- meld(creatinine = 1.2, bilirubin = 5,
+                     inr = 2.0, units = "US", dialysis = TRUE)
   expected  <- round((0.957 * log(4) +
                        0.378 * log(5) +
                        1.120 * log(2) +
@@ -18,7 +20,8 @@ test_that("Testing that meld score calculates correctly (US + dialysis)", {
 })
 
 test_that("Testing that meld score calculates correctly (SI + no dialysis)", {
-  calculated <- meld(creatinine = 120, bilirubin = 80, inr = 2.0, unit = "SI", dialysis = "no")
+  calculated <- meld(creatinine = 120, bilirubin = 80, inr = 2.0, units = "SI",
+                     dialysis = FALSE)
   expected  <- round((0.957 * log(120*0.0113) +
                        0.378 * log(80*0.0584) +
                        1.120 * log(2) +
@@ -28,7 +31,8 @@ test_that("Testing that meld score calculates correctly (SI + no dialysis)", {
 })
 
 test_that("Testing that meld score calculates correctly (SI + dialysis)", {
-  calculated <- meld(creatinine = 120, bilirubin = 80, inr = 2.0, unit = "SI", dialysis = "yes")
+  calculated <- meld(creatinine = 120, bilirubin = 80, inr = 2.0,
+                     units = "SI", dialysis = TRUE)
   expected  <- round((0.957 * log(4) +
                        0.378 * log(80*0.0584) +
                        1.120 * log(2) +
@@ -38,7 +42,8 @@ test_that("Testing that meld score calculates correctly (SI + dialysis)", {
 })
 
 test_that("MELD values below 1 are set to 1", {
-  calculated <- meld(creatinine = 0.5, bilirubin = 0.5, inr = 0.5,unit = "US", dialysis = "no")
+  calculated <- meld(creatinine = 0.5, bilirubin = 0.5, inr = 0.5,
+                     units = "US", dialysis = FALSE)
   
   expected <- round((0.957 * log(1) +
                        0.378 * log(1) +
@@ -48,24 +53,38 @@ test_that("MELD values below 1 are set to 1", {
   
 })
 
-test_that("MELD is vectorized", {
-  calculated <- meld(creatinine = c(0.5, 1, 2), bilirubin = c(0.5, 1, 2), inr = c(0.5, 1, 2), unit = "US")
+test_that("MELD is vectorized and handles dialysis as scalar", {
+  calculated <- meld(creatinine = c(0.5, 1, 2),
+                     bilirubin = c(0.5, 1, 2),
+                     inr = c(0.5, 1, 2), dialysis = FALSE,
+                     units = "US")
+  expect_length(calculated, 3)
+  expect_true(all(is.finite(calculated)))
+})
+
+test_that("MELD handles dialysis as a vector", {
+  calculated <- meld(creatinine = c(0.5, 1, 2),
+                     bilirubin = c(0.5, 1, 2),
+                     inr = c(0.5, 1, 2), dialysis = c(FALSE, TRUE, FALSE),
+                     units = "US")
   expect_length(calculated, 3)
   expect_true(all(is.finite(calculated)))
 })
 
 test_that("Invalid units produces error and stops MELD function", {
-  expect_error(
-    meld(1.2, 5, 2, unit = "Si"),
-    "unit must be either 'US' or 'SI'"
-  )
+  for(value in list("Si", "SU", "Usa", "Us")) {
+    expect_error(
+      meld(1.2, 5, 2, units = value),
+      "units must be one of: US, SI")
+  }
 })
 
-test_that("Invalid dialysis setting produces an error",{
-  expect_error(
-    meld(1.2, 5, 2, dialysis = "maybe"),
-    "dialysis must be either 'yes' or 'no'"
-  )
+test_that("Invalid dialysis setting produces an error", {
+  for(value in list("yes", "no", "maybe", 1, 0, NA)){
+    expect_error(
+      meld(1.2, 5, 2, dialysis = value),
+      "dialysis must be TRUE or FALSE"
+    )}
 })
 
 test_that("Missing values produce NAs in vectors",{

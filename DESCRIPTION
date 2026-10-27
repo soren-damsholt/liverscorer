@@ -2,7 +2,7 @@ Package: liverscoreR
 Title: Collection of Clinical Scores used in Hepatology
 Version: 0.0.0.9000
 Authors@R: 
-    person("Søren", "Damsholt", , "soerdm@clin.au.dk",
+    person(given = "Søren", family = "Damsholt", email = "soerdm@clin.au.dk",
           role = c("aut", "cre"),
           comment = c(ORCID = "0009-0003-7713-8454"))
 Description: A data package that provides fully vectorized functions of

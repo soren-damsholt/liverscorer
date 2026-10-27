@@ -31,7 +31,7 @@
 #' @param bilirubin Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
 #' @param inr International normalized ratio of coagulation factor II, VII and X.
 #' @param dialysis Parameter setting if the patient is on hemodialysis at the time of measurement (default = "no"), if yes, then creatinine is hard-coded to 4.0 mg/dL before calculation.
-#' @param unit Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.
+#' @param units Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.
 #' @param creatinine_conversion_factor Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).
 #' @param bilirubin_conversion_factor Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).
 #' @param digits Integer setting the number of digits the final score is rounded to (default = 0)
@@ -41,7 +41,7 @@
 #'
 #' @examples
 #'   # US units (mg/dL)
-#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, unit = "US", dialysis = "no") 
+#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = FALSE) 
 #'   # 20
 #'   
 #'   # or simply:
@@ -49,38 +49,53 @@
 #'   
 #'   #If the patient received dialysis at the time of sampling,
 #'   #creatinine is hard-coded to 4.0, regardless of measured value.
-#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, unit = "US", dialysis = "yes") 
+#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = TRUE) 
 #'   # 32
 #'   
-#'   #If you are using SI units, you need to change the "unit" setting to "SI", 
+#'   #If you are using SI units, you need to change the "units" setting to "SI", 
 #'   #which will then automatically convert your values before caluculating a MELD score.
-#'   meld(creatinine = 120, bilirubin = 80, inr = 2.0, unit = "SI") # should return 23
-meld <- function(creatinine, bilirubin, inr, dialysis = "no", unit = "US",
+#'   meld(creatinine = 120, bilirubin = 80, inr = 2.0, units = "SI") 
+#'   # should return 23
+meld <- function(creatinine, bilirubin, inr, dialysis = FALSE, units = "US",
                  creatinine_conversion_factor = 0.0113,
                  bilirubin_conversion_factor = 0.0584,
-                 digits = digits){
+                 digits = 0){
   #Input check
-  if(!unit %in% c("US", "SI")){
-    stop("unit must be either 'US' or 'SI'")
+  .check_scalar_choice(units, c("US", "SI"), "units")
+  .check_logical(dialysis, "dialysis")
+  
+  numeric_inputs <- list(creatinine = creatinine,
+                         bilirubin = bilirubin,
+                         inr = inr)
+  input_lengths <- vapply(numeric_inputs, length, integer(1))
+  
+  if(any(input_lengths == 0L)) {
+    stop("Input vectors must contain at least one observation")
   }
-  if(!dialysis %in% c("yes", "no")){
-    stop("dialysis must be either 'yes' or 'no'")
+  if(length(unique(input_lengths)) != 1L) {
+    stop("All patient-level input vectors must have the same length")
   }
+  
+  n <- input_lengths[1]
+  .check_scalar_or_length(dialysis, n, "dialysis")
+  
+  if(length(dialysis) == 1L) {
+    dialysis <- rep(dialysis, n)
+  }
+  
   # Locate missing values
   missing <- is.na(creatinine) |
                    is.na(bilirubin) |
                    is.na(inr)
   
   # Convert SI units to mg/dL
-  if(unit == "SI"){
+  if(units == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor
     bilirubin <- bilirubin * bilirubin_conversion_factor
   }
   
   # If dialysis
-  if(dialysis == "yes"){
-    creatinine <- 4.0
-  }
+  creatinine[dialysis] <- 4.0
   
   # Set MELD minimum values
   creatinine <- pmin(pmax(creatinine, 1), 4)
