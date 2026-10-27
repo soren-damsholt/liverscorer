@@ -22,7 +22,7 @@ meld(
 
 \item{inr}{International normalized ratio of coagulation factor II, VII and X.}
 
-\item{dialysis}{Parameter setting if the patient is on hemodialysis at the time of measurement (default = "no"), if yes, then creatinine is hard-coded to 4.0 mg/dL before calculation.}
+\item{dialysis}{Logical parameter setting if the patient is on hemodialysis at the time of measurement (default = FALSE), if TRUE, then creatinine is hard-coded to 4.0 mg/dL before calculation.}
 
 \item{units}{Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.}
 
