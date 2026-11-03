@@ -16,13 +16,23 @@ cp_score <- function(bilirubin, albumin, inr, ascites, he,
     stop("Bilirubin, albumin, inr and 'he' must be numeric")
   }
   
-  if(any(!is.na(he) & !he %in% rep(0:4))) {
-    stop("'he' must have a value between 0 and 4")
+  if(any(!is.na(he) & !he %in% 0:4)) {
+    stop("'he' must be an integer between 0 and 4")
   }
   
   if(!is.character(ascites) && !(is.logical(ascites) && all(is.na(ascites)))) {
     stop("ascites must be a character vector")}
   
+  missing <- is.na(bilirubin) | 
+              is.na(albumin) |
+              is.na(inr) |
+              is.na(ascites) |
+              is.na(he)
+  if(any(missing)) {
+    warning("Be aware that missing data will result in a NA value")
+  }
+  
+  ## characters tolower so capitalization does not break calculation
   correct_ascites_input <- c("absent", "slight", "moderate")
   ascites <- tolower(ascites)
   
@@ -51,8 +61,6 @@ cp_score <- function(bilirubin, albumin, inr, ascites, he,
     stop("All patient-level input vectors must be the same length")
   }
   
-  ## characters tolower so capitalization does not break calculation
-  
   ## Unit conversion
   if(units == "SI") {
     bilirubin <- bilirubin * bilirubin_conversion_factor
@@ -62,31 +70,33 @@ cp_score <- function(bilirubin, albumin, inr, ascites, he,
   
   ## Score calculation
   bilirubin_score <- rep(NA_real_, length(bilirubin))
-  bilirubin_score[bilirubin > 3] <- 3
-  bilirubin_score[bilirubin >= 2 & bilirubin <= 3] <- 2
-  bilirubin_score[bilirubin < 2] <- 1
+  bilirubin_score[which(bilirubin > 3)] <- 3
+  bilirubin_score[which(bilirubin >= 2 & bilirubin <= 3)] <- 2
+  bilirubin_score[which(bilirubin < 2)] <- 1
   
   albumin_score <- rep(NA_real_, length(albumin))
-  albumin_score[albumin > 3.5] <- 1
-  albumin_score[albumin >= 2.8 & albumin <= 3.5] <- 2
-  albumin_score[albumin < 2.8] <- 3
+  albumin_score[which(albumin > 3.5)] <- 1
+  albumin_score[which(albumin >= 2.8 & albumin <= 3.5)] <- 2
+  albumin_score[which(albumin < 2.8)] <- 3
   
   inr_score <- rep(NA_real_, length(inr))
-  inr_score[inr > 2.3] <- 3
-  inr_score[inr <= 2.3 & inr >= 1.7] <- 2
-  inr_score[inr < 1.7] <- 1
+  inr_score[which(inr > 2.3)] <- 3
+  inr_score[which(inr <= 2.3 & inr >= 1.7)] <- 2
+  inr_score[which(inr < 1.7)] <- 1
   
   ascites_score <- rep(NA_real_, length(ascites))
-  ascites_score[ascites == "absent"] <- 1
-  ascites_score[ascites == "slight"] <- 2
-  ascites_score[ascites == "moderate"] <- 3
+  ascites_score[which(ascites == "absent")] <- 1
+  ascites_score[which(ascites == "slight")] <- 2
+  ascites_score[which(ascites == "moderate")] <- 3
   
   he_score <- rep(NA_real_, length(he))
-  he_score[he == 0] <- 1
-  he_score[he %in% c(1, 2)] <- 2
-  he_score[he %in% c(3, 4)] <- 3
+  he_score[which(he == 0)] <- 1
+  he_score[which(he %in% c(1, 2))] <- 2
+  he_score[which(he %in% c(3, 4))] <- 3
   
   score <- bilirubin_score + albumin_score + inr_score + ascites_score + he_score
+  
+  score[missing] <- NA_real_
   
   score
 }

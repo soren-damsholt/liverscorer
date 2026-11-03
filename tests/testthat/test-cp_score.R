@@ -19,7 +19,7 @@ test_that("HE can only be NA or a value between 0 and 4", {
   wrong_inputs <-c(-1, 5, 10)
   for(var in wrong_inputs) {
     expect_error(cp_score(22, 22, 2, "slight", var, units = "SI"),
-                 "'he' must have a value between 0 and 4")
+                 "'he' must be an integer between 0 and 4")
   }
 })
 
@@ -56,7 +56,6 @@ test_that("Numeric inputs must all be positive", {
     }
   
 })
-
 
 ## UNIT CONVERSION
 test_that("Unit conversion occurs", {
@@ -96,6 +95,26 @@ test_that("Calculates correct scores", {
 })
 
 ## Missing values
+test_that("missing values produces warning, and sets value to NA", {
+  
+  calculated <- suppressWarnings(cp_score(bilirubin = NA,
+                         albumin = 22,
+                         inr = 2,
+                         ascites = "slight",
+                         he = 2,
+                         units = "SI"))
+  
+  expect_warning(cp_score(bilirubin = NA,
+                          albumin = 22,
+                          inr = 2,
+                          ascites = "slight",
+                          he = 2,
+                          units = "SI"))
+  
+  expect_equal(calculated, NA_real_)
+})
+
+
 
 ## Vectorization
 test_that("function is fully vectorized", {
