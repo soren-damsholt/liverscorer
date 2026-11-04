@@ -184,6 +184,8 @@ lfi <- function(grip1 = NULL, grip2 = NULL, grip3 = NULL, time_to_stand,
        is.na(tandem) |
        is.na(sex)
      
+     .warn_missing(missing)
+     
   # Sex adjusted grip strength
      sex_adjusted_grip <- ifelse(sex == "male",
                                 (avg_grip - 34.175) / 9.976,

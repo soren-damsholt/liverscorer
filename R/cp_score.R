@@ -28,9 +28,8 @@ cp_score <- function(bilirubin, albumin, inr, ascites, he,
               is.na(inr) |
               is.na(ascites) |
               is.na(he)
-  if(any(missing)) {
-    warning("Be aware that missing data will result in a NA value")
-  }
+  
+  .warn_missing(missing)
   
   ## characters tolower so capitalization does not break calculation
   correct_ascites_input <- c("absent", "slight", "moderate")

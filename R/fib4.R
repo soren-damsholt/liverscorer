@@ -97,6 +97,8 @@ fib4 <- function(age, asat, platelets, alat, digits = 2) {
               is.na(asat) |
               is.na(platelets) |
               is.na(alat)
+  
+  .warn_missing(missing)
    
     score <- (age * asat) /
     (platelets * sqrt(alat))

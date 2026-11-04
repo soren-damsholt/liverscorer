@@ -72,6 +72,8 @@ elf <- function(HA, PIIINP, TIMP, digits = 2, platform = "centaur_xp"){
   ## Missing values
   missing <- is.na(HA) | is.na(PIIINP) | is.na(TIMP)
   
+  .warn_missing(missing)
+  
   # Vector length validation (i.e. require that each vector has exactly same length).
   # Except platform which may be a scalar setting.
   input_lengths <- c(length(HA), 

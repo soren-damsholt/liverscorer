@@ -109,6 +109,11 @@ clif_ad <- function(age, creatinine, inr,
     stop("All patient-level input vectors must have the same length")
   }
   
+  missing <- is.na(age) | is.na(creatinine) | is.na(inr) |
+    is.na(wbc) | is.na(sodium)
+  
+  .warn_missing(missing)
+  
   # Creatinine transformation to mg/dL
   
   if(units == "SI") {

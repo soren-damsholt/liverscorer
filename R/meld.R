@@ -88,6 +88,8 @@ meld <- function(creatinine, bilirubin, inr, dialysis = FALSE, units = "US",
                    is.na(bilirubin) |
                    is.na(inr)
   
+  .warn_missing(missing)
+  
   # Convert SI units to mg/dL
   if(units == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor

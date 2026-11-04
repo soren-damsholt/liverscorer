@@ -113,7 +113,7 @@ clif_aclf <- function(age, wbc, bilirubin, creatinine, encephalopathy,
                            oxygen_ratio_type = oxygen_ratio_type, rrt = rrt,
                            mechanical_ventilation = mechanical_ventilation,
                            vasopressors = vasopressors,
-                           units = units)
+                           units = units, .warn_missing_data = FALSE)
   
   ## Input length validation
   input_lengths <- c(age = length(age),
@@ -127,6 +127,8 @@ clif_aclf <- function(age, wbc, bilirubin, creatinine, encephalopathy,
   missing <- is.na(clif_of_score) | 
              is.na(age) |
              is.na(wbc)
+  
+  .warn_missing(missing)
   
   ## CLIF ACLF SCORE  
   clif_c_aclf <- 10 * (0.33 * clif_of_score +

@@ -178,35 +178,26 @@ test_that("dialysis with invalid vector length produces an error", {
 
 # NA HANDLING TESTS
 test_that("Input validation of NA handling", {
-  expect_equal(meld3(sex = "female", age = NA, creatinine = 120, bilirubin = 80, inr = 2.0,
-                     sodium = 130, albumin = 30, unit = "SI",dialysis = TRUE),
-               NA_real_)
-  expect_equal(meld3(sex = "female", age = 32, creatinine = NA, bilirubin = 80, inr = 2.0,
-                     sodium = 130, albumin = 30, unit = "SI",dialysis = TRUE),
-               NA_real_)
-  expect_equal(meld3(sex = "female", age = 32, creatinine = 120, bilirubin = NA, inr = 2.0,
-                     sodium = 130, albumin = 30, unit = "SI",dialysis = TRUE),
-               NA_real_)
-  expect_equal(meld3(sex = "female", age = 32, creatinine = 120, bilirubin = 80, inr = NA,
-                     sodium = 130, albumin = 30, unit = "SI",dialysis = TRUE),
-               NA_real_)
-  expect_equal(meld3(sex = "female", age = 32, creatinine = 120, bilirubin = 80, inr = 2.0,
-                     sodium = NA, albumin = 30, unit = "SI",dialysis = TRUE),
-               NA_real_)
-  expect_equal(meld3(sex = "female", age = 32, creatinine = 120, bilirubin = 80, inr = 2.0,
-                     sodium = 130, albumin = NA, unit = "SI",dialysis = TRUE),
-               NA_real_)
+  expect_warning(results <- meld3(sex = c("female", "female", "female", "female", "female", "female"),
+                                  age = c(NA, 32, 32, 32, 32, 32),
+                                  creatinine = c(120, NA, 120, 120, 120, 120),
+                                  bilirubin = c(80, 80, NA, 80, 80, 80),
+                                  inr = c(2.0, 2.0, 2.0, NA, 2.0, 2.0),
+                                  sodium = c(130, 130, 130, 130, NA, 130),
+                                  albumin = c(30, 30, 30, 30, 30, NA)
+                                  ))
+  expect_true(all(is.na(results)))
 })
 
 test_that("NA in a vector only produces a NA for the corresponding missing scores", {
-  result <- meld3(sex = c("male", "female", "male", "female"),
+  expect_warning(result <- meld3(sex = c("male", "female", "male", "female"),
                   age = c(22, 18, NA, 16),
                   creatinine = c(120, 130, 140, 150),
                   bilirubin = c(50, 60, 70, 90),
                   inr = c(1.5, 2.0, 2.5, 3.0),
                   sodium = c(NA, 136, 140, 150),
                   albumin = c(30, 40, 25, 20),
-                  unit = "SI")
+                  unit = "SI"))
   
   expect_true(is.na(result[1]))
   expect_false(is.na(result[2]))

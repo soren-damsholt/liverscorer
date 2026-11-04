@@ -147,6 +147,8 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
               is.na(inr) |
               is.na(sodium) |
               is.na(albumin)
+  
+  .warn_missing(missing)
    
   # unit conversion to mg/dL
   if(unit == "SI"){

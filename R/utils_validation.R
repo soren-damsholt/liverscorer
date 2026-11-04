@@ -36,3 +36,10 @@
                  name))
   }
 }
+
+.warn_missing <- function(missing) {
+  if(isTRUE(getOption("liverscoreR.warn_missing", TRUE)) && 
+     any(missing)) {
+    warning("Missing inputs will produce NA values")
+  }
+}
