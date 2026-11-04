@@ -1,5 +1,5 @@
 
-# liverscoreR <a href="https://github.com/soren-damsholt/liverscoreR"><img src="man/figures/logo.png" align="right" height="138" /></a>
+# liverscoreR <a href="https://github.com/soren-damsholt/liverscoreR"><img src="man/figures/logo.png" align="right" height="138"/></a>
 
 [![R-CMD-check](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/soren-damsholt/liverscorer/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
@@ -7,6 +7,8 @@ coverage](https://codecov.io/gh/soren-damsholt/liverscorer/graph/badge.svg)](htt
 
 Collection of severity scores in general hepatology. Currently i have
 created fully vectorized functions for calculating:
+
+- Child-Pugh score
 
 - MELD score
 
@@ -25,6 +27,10 @@ created fully vectorized functions for calculating:
 - ELF score
 
 - FIB4 index
+
+- PELD score
+
+- Leipzig score
 
 ## Installation
 
@@ -103,7 +109,11 @@ meld_data %>%
 #> 20         87        82   2   20    20
 
 
-## You will notice that here dialysis is a scalar set to "no". However you can also pass a vector of "yes" and "no" per subject in case you have that information. Several functions have buildt in possibility for using binary setting as both vectors and scalars. See documentation for the specific functions.
+## You will notice that before dialysis is a scalar set to "FALSE".
+## However you can also pass a vector of "TRUE" and "FALSE" per subject.
+## In thatn case, the setting will be evaluated by individual, and here creatinine
+## is harcoded to 4 mg/dL.
+## Several package functions has this feature buildt in. See the documentation.
 
 meld_data %>% 
   mutate(dialysis = sample(c(TRUE, FALSE), 20, replace = TRUE),

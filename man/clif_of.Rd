@@ -17,7 +17,8 @@ clif_of(
   oxygen_ratio_type = "pao2",
   units = "US",
   bilirubin_conversion_factor = 0.0584,
-  creatinine_conversion_factor = 0.0113
+  creatinine_conversion_factor = 0.0113,
+  .warn_missing_data = TRUE
 )
 }
 \arguments{
