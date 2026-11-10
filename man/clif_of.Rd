@@ -65,6 +65,9 @@ from μmol/L to mg/dL (default = 0.0584).}
 
 \item{creatinine_conversion_factor}{Factor multiplied to creatinine to
 convert from μmol/L to mg/dL (default = 0.0113).}
+
+\item{.warn_missing_data}{Logical setting defining if missing data should
+produce a warning. Default = TRUE. This is a global package option.}
 }
 \value{
 Integer vector of CLIF-C Organ Failure scores ranging from 6 to 18.

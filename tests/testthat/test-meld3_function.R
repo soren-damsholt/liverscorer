@@ -6,7 +6,7 @@ test_that("invalid sex produces an error", {
       sex = 1, age = 22,
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
-      unit = "SI"
+      units = "SI"
     ),
     "sex must be either 'male' or 'female'"
   )
@@ -19,7 +19,7 @@ test_that("non-numeric laboratory values produce an error", {
       sex = "female", age = 22,
       creatinine = "120", bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
-      unit = "SI"
+      units = "SI"
     ),
     "numeric"
   )
@@ -32,22 +32,22 @@ test_that("invalid unit produces an error", {
       sex = "female", age = 22,
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
-      unit = "sI"
+      units = "sI"
     ),
-    "unit must be one of: US, SI"
+    "units must be one of: US, SI"
   )
 })
 
 
-test_that("unit must be scalar", {
+test_that("units must be scalar", {
   expect_error(
     meld3(
       sex = "female", age = 22,
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
-      unit = c("US", "SI")
+      units = c("US", "SI")
     ),
-    "unit must be one of"
+    "units must be one of"
   )
 })
 
@@ -58,7 +58,7 @@ test_that("invalid age produces an error", {
       sex = "female", age = 11,
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
-      unit = "SI"
+      units = "SI"
     ),
     "12 years and older"
   )
@@ -72,7 +72,7 @@ test_that("invalid dialysis setting produces an error", {
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
       dialysis = "yes",
-      unit = "SI"
+      units = "SI"
     ),
     "dialysis must be TRUE or FALSE"
   )
@@ -86,7 +86,7 @@ test_that("missing dialysis setting produces an error", {
       creatinine = 120, bilirubin = 80,
       inr = 2.0, sodium = 130, albumin = 30,
       dialysis = NA,
-      unit = "SI"
+      units = "SI"
     ),
     "dialysis must be TRUE or FALSE"
   )
@@ -104,7 +104,7 @@ test_that("differing patient-level vector lengths produce an error", {
       inr = 2.0,
       sodium = 130,
       albumin = 30,
-      unit = "SI"
+      units = "SI"
     ),
     "All input vectors must have the same length"
   )
@@ -121,7 +121,7 @@ test_that("empty patient-level inputs produce an error", {
       inr = numeric(0),
       sodium = numeric(0),
       albumin = numeric(0),
-      unit = "SI"
+      units = "SI"
     ),
     "Input vectors must contain at least one observation"
   )
@@ -139,7 +139,7 @@ test_that("dialysis may be scalar or match patient-level input length", {
       sodium = c(130, 135),
       albumin = c(3, 3.2),
       dialysis = FALSE,
-      unit = "US"
+      units = "US"
     )
   )
   
@@ -153,7 +153,7 @@ test_that("dialysis may be scalar or match patient-level input length", {
       sodium = c(130, 135),
       albumin = c(3, 3.2),
       dialysis = c(FALSE, TRUE),
-      unit = "US"
+      units = "US"
     )
   )
 })
@@ -170,7 +170,7 @@ test_that("dialysis with invalid vector length produces an error", {
       sodium = c(130, 135),
       albumin = c(3, 3.2),
       dialysis = c(FALSE, TRUE, FALSE),
-      unit = "US"
+      units = "US"
     ),
     "dialysis must have length 1"
   )
@@ -197,7 +197,7 @@ test_that("NA in a vector only produces a NA for the corresponding missing score
                   inr = c(1.5, 2.0, 2.5, 3.0),
                   sodium = c(NA, 136, 140, 150),
                   albumin = c(30, 40, 25, 20),
-                  unit = "SI"))
+                  units = "SI"))
   
   expect_true(is.na(result[1]))
   expect_false(is.na(result[2]))
@@ -216,7 +216,7 @@ test_that("SI and US units give equivalent results", {
     inr = 1.5,
     sodium = 130,
     albumin = 3,
-    unit = "US"
+    units = "US"
   )
   
   si <- meld3(
@@ -227,7 +227,7 @@ test_that("SI and US units give equivalent results", {
     inr = 1.5,
     sodium = 130,
     albumin = 3 / 0.1,
-    unit = "SI"
+    units = "SI"
   )
   
   expect_equal(us, si)

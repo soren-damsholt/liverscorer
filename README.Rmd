@@ -37,6 +37,8 @@ Collection of severity scores in general hepatology. Currently i have created fu
 
 - FIB4 index
 
+- APRI score
+
 - PELD score
 
 - Leipzig score

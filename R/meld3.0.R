@@ -46,7 +46,7 @@
 #' @param sodium Numeric vector of sodium measured as either mmol/L or mEq/L
 #' @param albumin Numeric vector of albumin measured as either g/L or g/dL
 #' @param dialysis Setting of if the patient has received ≥2 dialysis treatments during the 7 days preceding creatinine measurement or ≥24 hours of continuous veno-venous hemodialysis preceding the creatinine measurement (Default = FALSE).
-#' @param unit Character specifying the units of the laboratory measurements.
+#' @param units Character specifying the units of the laboratory measurements.
 #'              '"US"' expects creatinine and bilirubin in mg/dL and albumin in g/dL.
 #'              '"SI"' expects creatinine and bilirubin in µmol/L and albumin in g/L.
 #'             Sodium is entered in mmol/L (numerically equivalent to mEq/L) in each setting.
@@ -59,7 +59,7 @@
 #'
 #' @examples
 #'   meld3(sex = "female", age = 22, creatinine = 1, bilirubin = 1,
-#'    inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, unit = "US")
+#'    inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, units = "US")
 #'   # 17
 #'   
 #'   # This can be simplified to:
@@ -67,24 +67,24 @@
 #'   
 #'   # SI units can be applied and are automatically converted to mg/dL and g/dL 
 #'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17,
-#'    inr = 1, sodium = 125, albumin = 36, unit = "SI")
+#'    inr = 1, sodium = 125, albumin = 36, units = "SI")
 #'   # 17
 #'   
 #'   # If the patient meets the dialysis criteria, creatinine is set to 3.0 mg/dL.
 #'   # This setting can be enabled by setting "dialysis" to TRUE
 #'   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1,
-#'    sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
+#'    sodium = 125, albumin = 36, units = "SI", dialysis = TRUE)
 #'   # 29
 #'   
 #'   # If the patient is aged below 18, the sex-independent formula is applied
 #'   meld3(sex = "male", age = 16, creatinine = 112, bilirubin = 80, inr = 2.0,
-#'    sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+#'    sodium = 136, albumin = 35, units = "SI", dialysis = FALSE)
 #'   # 24
 #'   meld3(sex = "male", age = 22, creatinine = 112, bilirubin = 80, inr = 2.0,
-#'    sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+#'    sodium = 136, albumin = 35, units = "SI", dialysis = FALSE)
 #'   # 22
 
-meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysis = FALSE, unit = "US",
+meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysis = FALSE, units = "US",
                   creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584,
                   albumin_conversion_factor = 0.1){
 
@@ -106,7 +106,7 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
     stop("Age, creatinine, bilirubin, INR, sodium and albumin must be numeric")
   }
   
-  .check_scalar_choice(unit, c("US", "SI"), "unit")
+  .check_scalar_choice(units, c("US", "SI"), "units")
   
   if(!all(age >= 12 | is.na(age))){
     stop("MELD 3.0 is applicable to candidates aged 12 years and older")
@@ -151,7 +151,7 @@ meld3 <- function(sex, age, creatinine, bilirubin, inr, sodium, albumin, dialysi
   .warn_missing(missing)
    
   # unit conversion to mg/dL
-  if(unit == "SI"){
+  if(units == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor
     bilirubin <- bilirubin * bilirubin_conversion_factor
     albumin <- albumin * albumin_conversion_factor

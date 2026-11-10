@@ -28,6 +28,8 @@ created fully vectorized functions for calculating:
 
 - FIB4 index
 
+- APRI score
+
 - PELD score
 
 - Leipzig score

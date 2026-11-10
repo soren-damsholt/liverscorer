@@ -3,6 +3,7 @@
 export(clif_aclf)
 export(clif_ad)
 export(clif_of)
+export(cp_score)
 export(elf)
 export(fib4)
 export(lfi)

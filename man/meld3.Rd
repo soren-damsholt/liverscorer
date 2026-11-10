@@ -13,7 +13,7 @@ meld3(
   sodium,
   albumin,
   dialysis = FALSE,
-  unit = "US",
+  units = "US",
   creatinine_conversion_factor = 0.0113,
   bilirubin_conversion_factor = 0.0584,
   albumin_conversion_factor = 0.1
@@ -36,7 +36,7 @@ meld3(
 
 \item{dialysis}{Setting of if the patient has received ≥2 dialysis treatments during the 7 days preceding creatinine measurement or ≥24 hours of continuous veno-venous hemodialysis preceding the creatinine measurement (Default = FALSE).}
 
-\item{unit}{Character specifying the units of the laboratory measurements.
+\item{units}{Character specifying the units of the laboratory measurements.
 '"US"' expects creatinine and bilirubin in mg/dL and albumin in g/dL.
 '"SI"' expects creatinine and bilirubin in µmol/L and albumin in g/L.
 Sodium is entered in mmol/L (numerically equivalent to mEq/L) in each setting.}
@@ -87,7 +87,7 @@ Missing input values are automatically handled as NA values, and will produce NA
 }
 \examples{
   meld3(sex = "female", age = 22, creatinine = 1, bilirubin = 1,
-   inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, unit = "US")
+   inr = 1, sodium = 125, albumin = 3.6, dialysis = FALSE, units = "US")
   # 17
   
   # This can be simplified to:
@@ -95,21 +95,21 @@ Missing input values are automatically handled as NA values, and will produce NA
   
   # SI units can be applied and are automatically converted to mg/dL and g/dL 
   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17,
-   inr = 1, sodium = 125, albumin = 36, unit = "SI")
+   inr = 1, sodium = 125, albumin = 36, units = "SI")
   # 17
   
   # If the patient meets the dialysis criteria, creatinine is set to 3.0 mg/dL.
   # This setting can be enabled by setting "dialysis" to TRUE
   meld3(sex = "female", age = 22, creatinine = 88, bilirubin = 17, inr = 1,
-   sodium = 125, albumin = 36, unit = "SI", dialysis = TRUE)
+   sodium = 125, albumin = 36, units = "SI", dialysis = TRUE)
   # 29
   
   # If the patient is aged below 18, the sex-independent formula is applied
   meld3(sex = "male", age = 16, creatinine = 112, bilirubin = 80, inr = 2.0,
-   sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+   sodium = 136, albumin = 35, units = "SI", dialysis = FALSE)
   # 24
   meld3(sex = "male", age = 22, creatinine = 112, bilirubin = 80, inr = 2.0,
-   sodium = 136, albumin = 35, unit = "SI", dialysis = FALSE)
+   sodium = 136, albumin = 35, units = "SI", dialysis = FALSE)
   # 22
 }
 \references{
