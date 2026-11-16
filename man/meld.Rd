@@ -16,21 +16,32 @@ meld(
 )
 }
 \arguments{
-\item{creatinine}{Serum creatinine in either mg/dL (US units) or μmol/L (SI units).}
+\item{creatinine}{Serum creatinine in either mg/dL (US units) or μmol/L (SI
+units).}
 
-\item{bilirubin}{Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).}
+\item{bilirubin}{Serum total bilirubin in either mg/dL (US units) or μmol/L
+(SI units).}
 
-\item{inr}{International normalized ratio of coagulation factor II, VII and X.}
+\item{inr}{International normalized ratio of coagulation factor II, VII and
+X.}
 
-\item{dialysis}{Logical parameter setting if the patient is on hemodialysis at the time of measurement (default = FALSE), if TRUE, then creatinine is hard-coded to 4.0 mg/dL before calculation.}
+\item{dialysis}{Logical parameter setting if the patient is on hemodialysis
+at the time of measurement (default = FALSE), if TRUE, then creatinine is
+hard-coded to 4.0 mg/dL before calculation.}
 
-\item{units}{Parameter setting if the measurements are based on "US" units (mg/dL) or SI units (μmol/L). Default value is "US". If the setting is changed to "SI", creatinine and bilirubin will be converted to mg/dL by multiplying their respective conversion factor.}
+\item{units}{Parameter setting if the measurements are based on "US" units
+(mg/dL) or SI units (μmol/L). Default value is "US". If the setting is
+changed to "SI", creatinine and bilirubin will be converted to mg/dL by
+multiplying their respective conversion factor.}
 
-\item{creatinine_conversion_factor}{Factor multiplied to creatinine to convert from μmol/L to mg/dL (default = 0.0113).}
+\item{creatinine_conversion_factor}{Factor multiplied to creatinine to
+convert from μmol/L to mg/dL (default = 0.0113).}
 
-\item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert from μmol/L to mg/dL (default = 0.0584).}
+\item{bilirubin_conversion_factor}{Factor multiplied to bilirubin to convert
+from μmol/L to mg/dL (default = 0.0584).}
 
-\item{digits}{Integer setting the number of digits the final score is rounded to (default = 0)}
+\item{digits}{Integer setting the number of digits the final score is rounded
+to (default = 0)}
 }
 \value{
 A numeric vector of MELD scores, rounded to the nearest integer.
@@ -39,41 +50,46 @@ A numeric vector of MELD scores, rounded to the nearest integer.
 Calculates the Model for End-Stage Liver Disease (MELD).
 }
 \details{
-The MELD score is calculated from s-Creatinine, s-Bilirubin and s-inr.
-Creatinine is bounded between 1 and 4 mg/dL, while bilirubin and INR are bounded below at 1.
-Both US and SI units are applicable for this function, where SI units are automatically converted to mg/dl before calculation.
-If the patient has undertaken haemodialysis within 48 h of sample collection, the setting dialysis should be set to "yes", in which case creatinine is hardcoded to 4 (mg/dL).
-The MELD calculation follows this formula:
+The MELD score is calculated from s-Creatinine, s-Bilirubin and
+s-inr. Creatinine is bounded between 1 and 4 mg/dL, while bilirubin and INR
+are bounded below at 1. Both US and SI units are applicable for this
+function, where SI units are automatically converted to mg/dl before
+calculation. If the patient has undertaken haemodialysis within 48 h of
+sample collection, the setting dialysis should be set to "yes", in which
+case creatinine is hardcoded to 4 (mg/dL). The MELD calculation follows
+this formula:
 \enumerate{
 \deqn{
  MELD = 10 \times round(
-   0.957 \times \log(Creatinine) + 
+   0.957 \times \log(Creatinine) +
    0.378 \times \log(Bilirubin)+
    1.120\times \log(INR) + 0.643, digits = 10)}}
 
-If one or more of the required input values are missing for an observation, the corresponding MELD values is returned as "NA".
+If one or more of the required input values are missing for an observation,
+the corresponding MELD values is returned as "NA".
 }
 \examples{
   # US units (mg/dL)
-  meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = FALSE) 
+  meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = FALSE)
   # 20
-  
+
   # or simply:
   meld(1.2, 3.0, 2.0)
-  
+
   #If the patient received dialysis at the time of sampling,
   #creatinine is hard-coded to 4.0, regardless of measured value.
-  meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = TRUE) 
+  meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = TRUE)
   # 32
-  
-  #If you are using SI units, you need to change the "units" setting to "SI", 
+
+  #If you are using SI units, you need to change the "units" setting to "SI",
   #which will then automatically convert your values before caluculating a MELD score.
   meld(creatinine = 120, bilirubin = 80, inr = 2.0, units = "SI") 
   # should return 23
 }
 \references{
-Kamath PS, Wiesner RH, Malinchoc M, et al. A model to predict survival
-in patients with end-stage liver disease. Hepatology. 2001;33(2):464-470.
+Kamath PS, Wiesner RH, Malinchoc M, et al. A model to predict
+survival in patients with end-stage liver disease. Hepatology.
+2001;33(2):464-470.
 
 Kim WR, Mannalithara A, Heimbach JK, et al. MELD 3.0: The Model for
 End-Stage Liver Disease Updated for the Modern Era. Gastroenterology.
