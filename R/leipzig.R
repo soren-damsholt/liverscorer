@@ -145,7 +145,7 @@ leipzig <- function(kayser_fleischer, neurological_symptoms,
   }
   
   if(length(unique(input_lengths)) != 1) {
-    stop("All patient-level input vectors must have the same lengt")
+    stop("All patient-level input vectors must have the same length")
   }
   
   n <- unique(input_lengths)
