@@ -13,7 +13,7 @@
 #' 
 #' where AST and its ULN are expressed in U/L and platelet count in \eqn{10^9/L}.
 #' `ast_uln` may be supplied as a scalar, in which case it is applied to all 
-#' observations, or as a vector matching the patient-level input lenght. 
+#' observations, or as a vector matching the patient-level input length. 
 #' Missing inputs will result in `NA` for the corresponding observation.
 #' 
 #' AST ULN is laboratory specific and should be carefully considered and applied

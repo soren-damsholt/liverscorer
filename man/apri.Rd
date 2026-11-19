@@ -33,7 +33,7 @@ APRI = \fraq{AST / AST_[ULN]}{platelets}\times 100}
 
 where AST and its ULN are expressed in U/L and platelet count in \eqn{10^9/L}.
 \code{ast_uln} may be supplied as a scalar, in which case it is applied to all
-observations, or as a vector matching the patient-level input lenght.
+observations, or as a vector matching the patient-level input length.
 Missing inputs will result in \code{NA} for the corresponding observation.
 
 AST ULN is laboratory specific and should be carefully considered and applied
