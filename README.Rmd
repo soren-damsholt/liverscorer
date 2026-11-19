@@ -43,6 +43,8 @@ Collection of severity scores in general hepatology. Currently i have created fu
 
 - Leipzig score
 
+- CIRAS score
+
 ## Installation
 
 You can install the development version of liverscoreR from [GitHub](https://github.com/) with:
@@ -54,7 +56,7 @@ pak::pak("soren-damsholt/liverscorer")
 
 ## Example
 
-The functions can easily be applied to your data to calculate a severity score:
+The functions can easily be applied to your data to calculate a severity score, here the MELD score:
 
 ```{r example}
 library(liverscoreR)

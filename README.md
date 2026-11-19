@@ -34,6 +34,8 @@ created fully vectorized functions for calculating:
 
 - Leipzig score
 
+- CIRAS score
+
 ## Installation
 
 You can install the development version of liverscoreR from
@@ -47,7 +49,7 @@ pak::pak("soren-damsholt/liverscorer")
 ## Example
 
 The functions can easily be applied to your data to calculate a severity
-score:
+score, here the MELD score:
 
 ``` r
 library(liverscoreR)
