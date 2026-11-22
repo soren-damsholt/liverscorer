@@ -1,8 +1,40 @@
 # Core structure correctness
 
 ## test that one simple scalar case against reference
-## one vectorized multipatient case
+test_that("PELD calculates correctly for single patient", {
+  calculated <- peld_cr(age_years = 1, age_at_measurement = 12,
+                        sex = "female", height = 120, weight = 60,
+                        albumin = 20, bilirubin = 50, inr = 2,
+                        creatinine = 190, dialysis = FALSE, units = "SI")
+  expected <- 44
+  expect_equal(calculated, expected)
+})
+## one vectorized multi-patient case
+test_that("PELD calculates correctly for patient vector", {
+  calculated <- peld_cr(age_years = c(1, 1.5, 2),
+                        age_at_measurement = c(12, 18, 24),
+                        sex = c("female", "male", "female"),
+                        height = c(120, 140, 160),
+                        weight = c(60, 70, 80),
+                        albumin = c(20, 26, 36),
+                        bilirubin = c(50, 55, 60),
+                        inr = c(2, 1.9, 1.7),
+                        creatinine = c(190, 150, 90),
+                        dialysis = c(FALSE, FALSE, FALSE),
+                        units = "SI")
+  expected <- c(44, 43, 37)
+  expect_equal(calculated, expected)
+})
+
 ## minimum value returned is 6
+test_that("PELD is capped at 6 for lower values", {
+  calculated <- peld_cr(age_years = 8, age_at_measurement = 96,
+                        sex = "female", height = 150, weight = 60,
+                        albumin = 46, bilirubin = 5, inr = 1,
+                        creatinine = 20, dialysis = FALSE, units = "SI")
+  expected <- 6
+  expect_equal(calculated, 6)
+})
 
 # Growth component integration
 ## lower of height and weight score is used
