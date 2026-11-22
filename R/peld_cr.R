@@ -8,8 +8,8 @@
 #' creatinine and growth status. Growth status is represented by the lower of 
 #' the age- and sex-specific CDC height-for-age and weight-for-age z-scores.
 #' 
-#' Growht z-scores are calculated using the LMS method and the 2000 CDC growth
-#' Charts. Age-specific L, M, and S values are linarly interpolated when 
+#' Growth z-scores are calculated using the LMS method and the 2000 CDC growth
+#' Charts. Age-specific L, M, and S values are linearly interpolated when 
 #' age_at_measurement falls between successive reference ages.
 #' 
 #' age_years and age at measurement may represent different age measures.
