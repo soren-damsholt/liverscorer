@@ -7,7 +7,7 @@
   
   if(age_months < min(reference$age_months) ||
      age_months > max(reference$age_months)) {
-    stop("age_months is ouside the available growth refrence range")
+    stop("age_months is ouside the available growth reference range")
   }
   
   
@@ -81,6 +81,14 @@
   
   if(any(!is.na(sex) & !sex %in% c("male", "female"))) {
     stop("sex must be 'male' or 'female'")
+  }
+  
+  if(any(measurement < 0, na.rm = TRUE)) {
+    stop("measurement must be greater than 0")
+  }
+  
+  if(any(age_months < 0, na.rm = TRUE)) {
+    stop("age_months must be non-negative")
   }
   
   n <- length(measurement)

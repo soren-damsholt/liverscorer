@@ -1,100 +1,261 @@
-peld_cr <- function(age, sex, height, weight, albumin, bilirubin, inr,
+#' Pediatric End-stage Liver Disease (PELD Cr) score
+#' 
+#' Calculates the Pediatric End-Stage Liver Disease with Creatinine (PELD-CR)
+#' score for liver transplant candidates younger than 12 years.
+#' 
+#' @details
+#' The PELD-Cr score combines candidate age, albumin, total bilirubin, INR,
+#' creatinine and growth status. Growth status is represented by the lower of 
+#' the age- and sex-specific CDC height-for-age and weight-for-age z-scores.
+#' 
+#' Growht z-scores are calculated using the LMS method and the 2000 CDC growth
+#' Charts. Age-specific L, M, and S values are linarly interpolated when 
+#' age_at_measurement falls between successive reference ages.
+#' 
+#' age_years and age at measurement may represent different age measures.
+#' age_years is the fractional calendar age at the time of most recent laboratory
+#' value used for the PELD-Cr calculation. Under the OPTN specification, 
+#' fractional calendar age is calculated as the number of days between relevant
+#' laboratory date and the date of birth divided by 365.25.
+#' 
+#' age_at_measurement is the candidates age in months at the time the height and
+#' weight values were measured. If height and weight were measured on different 
+#' dates, the OPTN calculation uses the most recent measurement date to determine
+#' the age for z-score calculation.
+#' 
+#' Before calculation, albumin, bilirubin and INR values below 1 are set to 1. 
+#' Albumin is bounded at 1.9g/dL for its score contribution. Bilirubin 
+#' contributions are bounded at 4 and 40 mg/dL, and INR contributions at 2 and 
+#' 10, according to the PELD-Cr specification.
+#' 
+#' Creatinine is bounded between 0.2 and 1.3 mg/dL for its score contribution. A
+#' creatinine value of 1.3 mg/dL is used when `dialysis = TRUE`.
+#' 
+#' The growth term uses the minimum of the CDC height-for-age and weight-for-age
+#' z-scores. This value is bounded between -5 and -2.1 before its contribution to
+#' the score is calculated.
+#' 
+#' The component terms are combined as 
+#' \deqn{PELD = (x + 1.5287) \times 10 + 2.82}
+#' 
+#' where \eqn{x} is the sum of the age, albumin, bilirubin, INR, growth and 
+#' creatinine terms. The resulting value is rounded to nearest integer and values
+#' below 6 are set to 6.
+#' 
+#' The `units` argument applies only to laboratory measurements. Height must be
+#' supplied in centimeters and weight in kilograms regardless of the selected
+#' laboratory unit system.
+#' 
+#' The function is vectorized. Patient-level input vectors must have equal 
+#' lengths, `dialysis` may be supplied as either a single logical value or as a
+#' logical vector matching the patient-level input length. Missing inputs will
+#' produce a NA value.
+#' 
+#' @references Hsu E, Schladt DP, Wey A, Perito ER, Israni AK. Improving the
+#'   predictive ability of the pediatric end-stage liver disease score for young
+#'   children awaiting liver transplant. Am J Transplant. 2021
+#'   Jan;21(1):222-228. doi: 10.1111/ajt.15925. Epub 2020 May 29. PMID:
+#'   32306489.
+#'
+#' @param age_years Numeric vector of candidate age in fractional calendar years
+#'  at the time of the most recent laboratory value. Values must be greater than
+#'  0 and less than 12.
+#' @param age_at_measurement Numeric vector of candidate age in months at the 
+#'  anthropometric measurement date used to calculate the CDC height/weight
+#'  z-scores.
+#' @param sex Character vector specifying birth sex. Must be one of "male" or
+#'  "female". 
+#' @param height Numeric vector of height or length measurements in centimeters. 
+#' @param weight Numeric vector of weight measurements in kilograms.
+#' @param albumin Numeric vector of serum albumin concentrations. Supply values
+#'  in d/dL when `units = "US"` and g/L when `units = "SI"`.
+#' @param bilirubin Numeric vector of serum bilirubin concentrations. Supply 
+#'  values in mg/dL when `units = "US"` and \eqn{\mu mol/L} when `units = "SI"`.
+#' @param inr Numeric vector of international normalized ratio (INR) values.
+#' @param creatinine Numeric vector of serum creatinine concentrations. Supply
+#'  values in mg/dL when `units = "US"` and \eqn{\mu mol/L} when `units = SI`.
+#' @param dialysis Logical vector or scalar indicating whether the candidate 
+#'  has received dialysis twice or higher within the last 7 days or at least 24
+#'  hours of continuous veno-venous hemodialysis (CVVHD) within that period. If
+#'  a scalar value i set it is recycled across all observations.
+#' @param units Character scalar specifying the laboratory unit system. Must be
+#'  one of `US` or `SI`. This argument does not alter the required units for 
+#'  height or weight.
+#' @param albumin_conversion_factor Numeric scalar used to convert albumin from
+#'  g/L to g/dL when `units = SI`. Default = 0.1
+#' @param bilirubin_conversion_factor Numeric scalar used to convert bilirubin 
+#'  from \eqn{\mu mol/L} to mg/dL when `units = "SI"`. Default = 0.0584.
+#' @param creatinine_conversion_factor Numeric scalar used to convert creatinine
+#'  from \eqn{\mu mol/L} to mg/dL when `units = SI`. Default = 0.0113.
+#'
+#' @returns An integer vector containing the calculated PELD-Cr scores.
+#' @export
+#'
+#' @examples
+#'  peld_cr(
+#'   age_years = 2,
+#'   age_at_measurement = 24,
+#'   sex = "female",
+#'   height = 85,
+#'   weight = 12,
+#'   albumin = 3.2,
+#'   bilirubin = 2.5,
+#'   inr = 1.4,
+#'   creatinine = 0.4)
+#'   # 17
+peld_cr <- function(age_years, age_at_measurement,
+                    sex, height, weight, albumin, bilirubin, inr,
                     creatinine, dialysis = FALSE, units = "US",
                     albumin_conversion_factor = 0.1,
                     bilirubin_conversion_factor = 0.0584,
-                    creatinine_conversion_factor =0.0113) {
+                    creatinine_conversion_factor = 0.0113) {
   
   
-  # age should be below 12, throw warning if higher!
-  # Bilirubin, albumin, inr values below 1.0 are set to 1.0
-  # dialysis = TRUE should hard set creatninin to 1.3 mg/dL.
+  # VALIDATE
+  numeric_inputs <- list(
+    age_years = age_years,
+    age_at_measurement = age_at_measurement,
+    height = height,
+    weight = weight,
+    albumin = albumin,
+    bilirubin = bilirubin,
+    inr = inr,
+    creatinine = creatinine
+  )
   
-  # zdc_z = min(CDC height z-score, CDC weight z-score):
-  # cdc_height <- data.frame(age = c(0, seq(0.5, 12.5, 1 )),
-  #                           power = c(-1.295960857, -0.809249882, -0.050782985,
-  #                                     0.476851407, 0.843299612, 1.097562257,
-  #                                     1.272509641, 1.390428859, 1.466733925,
-  #                                     1.512301976, 1.534950767, 1.540390875,
-  #                                     1.532852892, 1.51550947),
-  #                           medians = c(49.28639612, 51.68358057, 55.28612813,
-  #                                       58.09381906, 60.45980763, 62.53669656,
-  #                                       64.40632762, 66.11841553, 67.70574419,
-  #                                       69.19123614, 70.59163924, 71.91961673,
-  #                                       73.1850104, 74.39564379),
-  #                           variation = c(0.05008556, 0.046818545, 0.0434439,
-  #                                         0.041716103, 0.040705173, 0.040079765,
-  #                                         0.039686845, 0.039444555, 0.039304738,
-  #                                         0.03923711, 0.039221665, 0.039244672,
-  #                                         0.03929642, 0.039369875))
-  # cdc_weight <- data.frame(age = c(0, seq(0.5, 12.5, 1 )),
-  #                          power = c(1.509187507, 1.357944315, 1.105537708,
-  #                                    0.902596648, 0.734121414, 0.590235275,
-  #                                    0.464391566, 0.352164071, 0.250497889,
-  #                                    0.15724751, 0.070885725, -0.00968493,
-  #                                    -0.085258, -0.15640945),
-  #                          medians = c(3.39918645, 3.79752846, 4.544776513,
-  #                                      5.230584214, 5.859960798, 6.437587751,
-  #                                      6.967850457, 7.454854109, 7.902436186,
-  #                                      8.314178377, 8.693418423, 9.043261854,
-  #                                      9.366593571, 9.666089185),
-  #                          variation = c(0.142106724, 0.138075916, 0.131733888,
-  #                                        0.126892697,	0.123025182, 0.119840911, 
-  #                                        0.117166868, 0.11489384, 0.112949644,
-  #                                        0.11128469, 0.109863709, 0.10866078,
-  #                                        0.10765621, 0.106834517)
-  #                          )
-  # cdc_height
-  # 
-  # z_score_height <- ((height/cdc_height$medians[cdc_height$age == age]))^cdc_height
+  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1L)))){
+    stop("Numeric patient-level inputs must be numeric")
+  }
   
+  input_lengths <- c(length(age_years),
+                     length(age_at_measurement),
+                     length(sex),
+                     length(height),
+                     length(weight),
+                     length(albumin),
+                     length(bilirubin),
+                     length(inr),
+                     length(creatinine))
   
+  if(any(input_lengths == 0L)) {
+    stop("Patient-level inputs must contain at least one observation")
+  }
   
-  # Unit conversion:
+  if(length(unique(input_lengths)) != 1L) {
+    stop("All patient-level input vectors must have the same length")
+  }
+  
+  n <- input_lengths[[1]]
+  
+  .check_logical(dialysis, "dialysis", allow_na = TRUE)
+  .check_scalar_or_length(dialysis, n, "dialysis")
+  .check_scalar_choice(units, c("US", "SI"), "units")
+  
+  if(!(is.character(sex) || (is.logical(sex) && all(is.na(sex))))){
+    stop("sex must be 'male' or 'female'")
+  }
+  
+  if(is.logical(sex)){
+    sex <- rep(NA_character_, length(sex))
+  }
+  sex <- tolower(sex)
+  
+  if(any(!is.na(sex) & !sex %in% c("male", "female"))) {
+    stop("sex must be 'male' or 'female'")
+  }
+  
+  if(any(height <= 0, na.rm = TRUE)) {
+    stop("height must be greater than 0")
+  }
+  if(any(weight <= 0, na.rm = TRUE)){
+    stop("weight must be greater than 0") }
+  
+  if(any(albumin <= 0, na.rm = TRUE)) {
+    stop("albumin must be greater than 0")}
+  
+  if(any(bilirubin < 0, na.rm = TRUE)) {
+    stop("bilirubin must be non-negative")}
+  
+  if(any(inr <= 0, na.rm = TRUE)) {
+    stop("inr must be greater than 0")}
+  
+  if(any(creatinine <= 0, na.rm = TRUE)) {
+    stop("creatinine must be greater than 0")}
+  
+  if(any(age_years < 0 | age_years >= 12, na.rm = TRUE)) {
+    stop("age_years must be greater or equal to 0 and less than 12")
+  }
+  if(any(age_at_measurement < 0 | age_at_measurement >= 144, na.rm = TRUE)) {
+    stop("age_at_measurement must be between 0 and 144 months")
+  }
+  
+  # CONVERT UNITS
   if(units == "SI") {
     albumin <- albumin * albumin_conversion_factor
     bilirubin <- bilirubin * bilirubin_conversion_factor
     creatinine <- creatinine * creatinine_conversion_factor
   }
   
-  # Age subscore:
-  age_score <- rep(NA_real_, length(age))
-  age_score[which(age < 1)] <- -0.1967
-  age_score[which(age >= 1 & age <= 5.5)] <- -0.1967 * age
-  age_score[which(age > 5.5)] <- -0.1967 * 5.5
+  # REP length of dialysis to vector size
+  if(length(dialysis) == 1L) {
+    dialysis <- rep(dialysis, n)
+  }
+
+  # MISSING INPUTS
+  missing <- is.na(age_years) | is.na(age_at_measurement) |
+    is.na(sex) | is.na(height) | is.na(weight) |
+    is.na(albumin) | is.na(bilirubin) | is.na(inr) |
+    is.na(creatinine) | is.na(dialysis)
   
-  # Albumin score (NB. g/dL, need to convert)
-  albu_score <- rep(NA_real_, length(albumin))
-  albu_score[which(albumin >= 1 & albumin <= 1.9)] <- -1.842 * log(albumin)
-  albu_score[which(albumin > 1.9)] <- -1.842 * log(1.9)
+  .warn_missing(missing)
   
-  #Bilirubin score
-  bili_score <- rep(NA_real_, length(bilirubin))
-  bili_score[which(bilirubin >= 1 & bilirubin <= 4)] <- 0.7854 * log(bilirubin) + 0.3434 * log(4)
-  bili_score[which(bilirubin > 4 & bilirubin <= 40)] <- 0.7854 * log(4) + 0.3434 * log(bilirubin)
-  bili_score[which(bilirubin > 40)] <- 0.7854 * log(4) + 0.3434 * log(40)
+  # CALCULATE Z SCORES
+  z_height <- .cdc_growth_z(age_months = age_at_measurement,
+                            sex = sex,
+                            measurement = height,
+                            reference = cdc_height)
   
-  # INR score
-  inr_score <- rep(NA_real_, length(inr))
-  inr_score[which(inr >= 1 & inr <= 2)] <- 1.981 * log(inr) + 0.7298 * log(2)
-  inr_score[which(inr > 2 & inr <= 10)] <- 1.981 * log(2) + 0.7298 * log(inr)
-  inr_score[which(inr > 10)] <- 1.981 * log(2) + 0.7298 * log(10)
+  z_weight <- .cdc_growth_z(age_months = age_at_measurement,
+                            sex = sex,
+                            measurement = weight,
+                            reference = cdc_weight)
   
-  # #Height score
-  # height_score <- rep(NA_real_,length(cdc_z))
-  # height_score[which(cdc_z < -5)] <- -0.1807 * (-5)
-  # height_score[which(cdc_z >= -5 <= -2.1)] <- -0.1807 * (cdc_z)
-  # height_score[which(cdc_z > -2.1)] <- -0.1807 * (-2.1)
+  z_min <- pmin(z_height, z_weight)
   
-  # Creatinine score
-  crea_score <- rep(NA_real_, length(creatinine))
-  crea_score[which(creatinine < 0.2)] <- 1.453 * log(0.2)
-  crea_score[which(creatinine >= 0.2 & creatinine <= 1.3)] <- 1.453 * log(creatinine)
-  crea_score[which(creatinine > 1.3)] <- 1.453 * log(1.3)
+  # OPTN bounds
+  age_bounded <- pmin(pmax(age_years, 1), 5.5)
+  albumin_bounded <- pmin(pmax(albumin, 1), 1.9)
+  bilirubin <- pmax(bilirubin, 1)
+  inr <- pmax(inr, 1)
+  creatinine[which(dialysis)] <- 1.3
+  creatinine_bounded <- pmin(pmax(creatinine, 0.2), 1.3)
   
-  x <- age_score + albu_score + bili_score + inr_score + height_score + creatinine_score
+  z_bounded <- pmin(pmax(z_min, -5), -2.1)
   
-  # formula = PELD CR: (x + 1.5287) * 10 + 2.82, rounded to nearest integer
+  # CALCULATE VECTORIZED TERMS
+  age_score <- -0.1967 * age_bounded
+  
+  albumin_score <- -1.842 * log(albumin_bounded)
+  
+  bilirubin_score <- 0.7854 * log(pmin(bilirubin, 4)) +
+                      0.3434 * log(pmin(pmax(bilirubin, 4), 40))
+  
+  inr_score <- 1.981 * log(pmin(inr, 2)) +
+                0.7298 * log(pmin(pmax(inr, 2), 10))
+  
+  growth_score <- -0.1807 * z_bounded
+  
+  creatinine_score <- 1.453 * log(creatinine_bounded)
+  
+  # COMBINE
+  x <- age_score + albumin_score + bilirubin_score +
+    inr_score + growth_score + creatinine_score
+  
   peld <- round((x + 1.5287) * 10 + 2.82)
+  
+  peld <- pmax(peld, 6)
+  
+  peld[missing] <- NA_real_
   
   peld
 }
