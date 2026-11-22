@@ -41,6 +41,10 @@ origial CIRAS model.
 Missing required data will result in an NA score for the corresponding
 observation.
 }
+\examples{
+ciras(50, ascites_accumulation = TRUE, diuretics = FALSE, sodium = 140)
+# 2
+}
 \references{
 Gantzel RH, Aagaard NK, Vilstrup H, Watson H, Grønbæk H, Jepsen P.
 Development and validation of the Cirrhotic Ascites Severity model-A

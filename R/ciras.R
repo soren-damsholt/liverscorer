@@ -42,6 +42,8 @@
 #' @export
 #'
 #' @examples
+#' ciras(50, ascites_accumulation = TRUE, diuretics = FALSE, sodium = 140)
+#' # 2
 ciras <- function(ascites_discomfort,
                   ascites_accumulation,
                   diuretics,

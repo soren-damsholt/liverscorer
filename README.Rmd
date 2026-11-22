@@ -39,7 +39,7 @@ Collection of severity scores in general hepatology. Currently i have created fu
 
 - APRI score
 
-- PELD score
+- PELD-Cr score
 
 - Leipzig score
 

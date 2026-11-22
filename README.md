@@ -30,7 +30,7 @@ created fully vectorized functions for calculating:
 
 - APRI score
 
-- PELD score
+- PELD-Cr score
 
 - Leipzig score
 
