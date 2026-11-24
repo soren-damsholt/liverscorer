@@ -6,14 +6,15 @@
 \usage{
 peld_cr(
   age_years,
-  age_at_measurement,
-  sex,
-  height,
-  weight,
   albumin,
   bilirubin,
   inr,
   creatinine,
+  age_at_measurement = NULL,
+  sex = NULL,
+  height = NULL,
+  weight = NULL,
+  growth_z = NULL,
   dialysis = FALSE,
   units = "US",
   albumin_conversion_factor = 0.1,
@@ -26,17 +27,6 @@ peld_cr(
 at the time of the most recent laboratory value. Values must be greater than
 0 and less than 12.}
 
-\item{age_at_measurement}{Numeric vector of candidate age in months at the
-anthropometric measurement date used to calculate the CDC height/weight
-z-scores.}
-
-\item{sex}{Character vector specifying birth sex. Must be one of "male" or
-"female".}
-
-\item{height}{Numeric vector of height or length measurements in centimeters.}
-
-\item{weight}{Numeric vector of weight measurements in kilograms.}
-
 \item{albumin}{Numeric vector of serum albumin concentrations. Supply values
 in d/dL when \code{units = "US"} and g/L when \code{units = "SI"}.}
 
@@ -47,6 +37,25 @@ values in mg/dL when \code{units = "US"} and \eqn{\mu mol/L} when \code{units = 
 
 \item{creatinine}{Numeric vector of serum creatinine concentrations. Supply
 values in mg/dL when \code{units = "US"} and \eqn{\mu mol/L} when \code{units = SI}.}
+
+\item{age_at_measurement}{Optional numeric vector of candidate age in months
+at the anthropometric measurement date used for the built-in CDC growth
+calculation. Required when \code{growth_z} is not supplied.}
+
+\item{sex}{Optional character vector specifying birth sex for the built-in
+CDC growth calculation. Accepted values are "male" and "female",
+case-insensitive. Required when \code{growth_z} is not supplied.}
+
+\item{height}{Optional numeric vector of height or length measurements in
+centimeters. Required when \code{growth_z} is not supplied.}
+
+\item{weight}{Optional numeric vector of weight measurements in kilograms.
+Required when \code{growth_z} is not supplied.}
+
+\item{growth_z}{Optional numeric vector containing the minimum of the
+height-for-age and weight-for-age z-scores calculated using an appropriate
+pediatric growth reference. When supplied, the built-in CDC growth inputs
+age_at_measurement, sex, height, and weight must not be supplied.}
 
 \item{dialysis}{Logical vector or scalar indicating whether the candidate
 has received dialysis twice or higher within the last 7 days or at least 24
@@ -75,20 +84,34 @@ score for liver transplant candidates younger than 12 years.
 }
 \details{
 The PELD-Cr score combines candidate age, albumin, total bilirubin, INR,
-creatinine and growth status. Growth status is represented by the lower of
-the age- and sex-specific CDC height-for-age and weight-for-age z-scores.
+creatinine and growth status.
 
-Growth z-scores are calculated using the LMS method and the 2000 CDC growth
-Charts. Age-specific L, M, and S values are linearly interpolated when
-age_at_measurement falls between successive reference ages.
+Growth status may be supplied using one of two approaches. By default, the
+function calculates age- and sex-specific height-for-age and weight-for-age
+z-scores using the 2000 CDC Growth Charts and uses the lower of the two
+z-scores. Alternatively, a pre-calculated minimum growth z-score may be
+supplied directly using \code{growth_z}. This allows use of an appropriate
+alternative or regional pediatric growth reference while retaining the
+PELD-Cr growth term.
 
-age_years and age at measurement may represent different age measures.
-age_years is the fractional calendar age at the time of most recent laboratory
+When the built-in CDC calculation is used, growth z-scores are calculated
+using the LMS approach and the 2000 CDC Growth Charts. Age-specific L, M and
+S reference values are linearly interpolated when \code{age_at_measurement} falls
+between successive reference ages. The CDC calculation requires \code{height},
+\code{weight}, \code{sex} and \code{age_at_measurement}.
+
+When \code{growth_z} is supplied, \code{age_at_measurement}, \code{sex}, \code{height} and \code{weight}
+are not required and must not also be supplied. \code{growth_z} must represent the
+minimum of the height-for-age and weight-for-age z-scores calculated using an
+appropriate pediatric growth reference.
+
+\code{age_years} and \code{age_at_measurement} may represent different age measures.
+\code{age_years} is the fractional calendar age at the time of most recent laboratory
 value used for the PELD-Cr calculation. Under the OPTN specification,
 fractional calendar age is calculated as the number of days between relevant
 laboratory date and the date of birth divided by 365.25.
 
-age_at_measurement is the candidates age in months at the time the height and
+\code{age_at_measurement} is the candidates age in months at the time the height and
 weight values were measured. If height and weight were measured on different
 dates, the OPTN calculation uses the most recent measurement date to determine
 the age for z-score calculation.
@@ -117,9 +140,9 @@ supplied in centimeters and weight in kilograms regardless of the selected
 laboratory unit system.
 
 The function is vectorized. Patient-level input vectors must have equal
-lengths, \code{dialysis} may be supplied as either a single logical value or as a
+lengths. \code{dialysis} may be supplied as either a single logical value or as a
 logical vector matching the patient-level input length. Missing inputs will
-produce a NA value.
+produce a NA value for the corresponding observation.
 }
 \examples{
  peld_cr(
@@ -133,11 +156,23 @@ produce a NA value.
   inr = 1.4,
   creatinine = 0.4)
   # 17
+  
+  # Supply a minimum growth z-score from an alternative growth reference
+peld_cr(
+  age_years = 2,
+  albumin = 3.2,
+  bilirubin = 2.5,
+  inr = 1.4,
+  creatinine = 0.4,
+  growth_z = -2.8
+)
 }
 \references{
-Hsu E, Schladt DP, Wey A, Perito ER, Israni AK. Improving the
-predictive ability of the pediatric end-stage liver disease score for young
-children awaiting liver transplant. Am J Transplant. 2021
-Jan;21(1):222-228. doi: 10.1111/ajt.15925. Epub 2020 May 29. PMID:
-32306489.
+\itemize{
+\item Hsu E, Schladt DP, Wey A, Perito ER, Israni AK. Improving the predictive
+ability of the pediatric end-stage liver disease score for young children
+awaiting liver transplant. Am J Transplant. 2021 Jan;21(1):222-228. doi:
+10.1111/ajt.15925. Epub 2020 May 29. PMID: 32306489.
+\item \href{https://www.hrsa.gov/sites/default/files/hrsa/optn/policy-guid-change_impr-liv-alloc-meld-peld-sta-1a-sta-1b_liv.pdf}{Organ Procurement and Transplant Network (OPTN). MELD and PELD Calculator User Guide.}
+}
 }
