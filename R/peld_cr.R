@@ -103,10 +103,11 @@
 #'   inr = 1.4,
 #'   creatinine = 0.4)
 #'   # 17
-peld_cr <- function(age_years, age_at_measurement,
-                    sex, height, weight, albumin, bilirubin, inr,
-                    creatinine, dialysis = FALSE, units = "US",
-                    albumin_conversion_factor = 0.1,
+peld_cr <- function(age_years, albumin, bilirubin, inr,
+                    creatinine, age_at_measurement = NULL,
+                    sex = NULL, height = NULL,
+                    weight = NULL, growth_z = NULL, dialysis = FALSE,
+                    units = "US", albumin_conversion_factor = 0.1,
                     bilirubin_conversion_factor = 0.0584,
                     creatinine_conversion_factor = 0.0113) {
   
@@ -114,9 +115,6 @@ peld_cr <- function(age_years, age_at_measurement,
   # VALIDATE
   numeric_inputs <- list(
     age_years = age_years,
-    age_at_measurement = age_at_measurement,
-    height = height,
-    weight = weight,
     albumin = albumin,
     bilirubin = bilirubin,
     inr = inr,
@@ -127,15 +125,8 @@ peld_cr <- function(age_years, age_at_measurement,
     stop("Numeric patient-level inputs must be numeric")
   }
   
-  input_lengths <- c(length(age_years),
-                     length(age_at_measurement),
-                     length(sex),
-                     length(height),
-                     length(weight),
-                     length(albumin),
-                     length(bilirubin),
-                     length(inr),
-                     length(creatinine))
+  input_lengths <- vapply(numeric_inputs,
+                          length, integer(1L))
   
   if(any(input_lengths == 0L)) {
     stop("Patient-level inputs must contain at least one observation")
@@ -150,25 +141,6 @@ peld_cr <- function(age_years, age_at_measurement,
   .check_logical(dialysis, "dialysis", allow_na = TRUE)
   .check_scalar_or_length(dialysis, n, "dialysis")
   .check_scalar_choice(units, c("US", "SI"), "units")
-  
-  if(!(is.character(sex) || (is.logical(sex) && all(is.na(sex))))){
-    stop("sex must be 'male' or 'female'")
-  }
-  
-  if(is.logical(sex)){
-    sex <- rep(NA_character_, length(sex))
-  }
-  sex <- tolower(sex)
-  
-  if(any(!is.na(sex) & !sex %in% c("male", "female"))) {
-    stop("sex must be 'male' or 'female'")
-  }
-  
-  if(any(height <= 0, na.rm = TRUE)) {
-    stop("height must be greater than 0")
-  }
-  if(any(weight <= 0, na.rm = TRUE)){
-    stop("weight must be greater than 0") }
   
   if(any(albumin <= 0, na.rm = TRUE)) {
     stop("albumin must be greater than 0")}
@@ -185,8 +157,25 @@ peld_cr <- function(age_years, age_at_measurement,
   if(any(age_years < 0 | age_years >= 12, na.rm = TRUE)) {
     stop("age_years must be greater or equal to 0 and less than 12")
   }
-  if(any(age_at_measurement < 0 | age_at_measurement >= 144, na.rm = TRUE)) {
-    stop("age_at_measurement must be between 0 and 144 months")
+  
+  cdc_growth_input <- list(
+    age_at_measurement = age_at_measurement,
+    sex = sex,
+    height = height,
+    weight = weight
+  )
+  
+  cdc_supplied <- !vapply(cdc_growth_input, is.null, logical(1L))
+  
+  external_growth_supplied <- !is.null(growth_z)
+  
+  if(external_growth_supplied && any(cdc_supplied)) {
+    stop("Provide either growth_z or CDC growth inputs, not both")
+  }
+  
+  if(!external_growth_supplied && !all(cdc_supplied)){
+    stop("Provide either growth_z or all of 'age_at_measurement',
+         'sex', 'height' and 'weight'")
   }
   
   # CONVERT UNITS
@@ -201,15 +190,63 @@ peld_cr <- function(age_years, age_at_measurement,
     dialysis <- rep(dialysis, n)
   }
 
-  # MISSING INPUTS
-  missing <- is.na(age_years) | is.na(age_at_measurement) |
-    is.na(sex) | is.na(height) | is.na(weight) |
-    is.na(albumin) | is.na(bilirubin) | is.na(inr) |
-    is.na(creatinine) | is.na(dialysis)
-  
-  .warn_missing(missing)
-  
   # CALCULATE Z SCORES
+  if(external_growth_supplied) {
+    if(!.is_numeric_or_na(growth_z)){
+      stop("growth_z must be numeric")}
+    
+    if(length(growth_z) != n) {
+      stop("growth_z must match patient-level input length")}
+    
+    if (any(!is.finite(growth_z) & !is.na(growth_z))) {
+      stop("growth_z must contain finite values")}
+    
+    z_min <- growth_z
+  }
+    
+  if(!external_growth_supplied){
+    
+    growth_numeric <- list(
+      age_at_measurement = age_at_measurement,
+      height = height,
+      weight = weight
+    )
+    
+    if(!all(vapply(growth_numeric, .is_numeric_or_na, logical(1L)))){
+      stop("'age_at_measurement', 'height' and 'weight' must be numeric")
+    }
+    
+    growth_lengths <- c(
+      age_at_measurement = length(age_at_measurement),
+      sex = length(sex),
+      height = length(height),
+      weight = length(weight)
+    )
+    if(any(growth_lengths != n )) {
+      stop("CDC growth inputs must match the patient-level input lengths")
+    }
+    
+    if(!(is.character(sex) || (is.logical(sex) && all(is.na(sex))))){
+      stop("sex must be 'male' or 'female'")}
+    
+    if(is.logical(sex)){
+      sex <- rep(NA_character_, length(sex))}
+    
+    sex <- tolower(sex)
+    
+    if(any(!is.na(sex) & !sex %in% c("male", "female"))) {
+      stop("sex must be 'male' or 'female'")}
+    
+    if(any(age_at_measurement < 0 | age_at_measurement >= 114, na.rm = TRUE)) {
+      stop("'age_at_measurement' must be greater or equal to 0 and less than 144 months")}
+    
+    if(any(height <= 0, na.rm = TRUE)) {
+      stop("height must be greater than 0")}
+    
+    if(any(weight <= 0, na.rm = TRUE)){
+      stop("weight must be greater than 0") }
+    
+    
   z_height <- .cdc_growth_z(age_months = age_at_measurement,
                             sex = sex,
                             measurement = height,
@@ -221,6 +258,13 @@ peld_cr <- function(age_years, age_at_measurement,
                             reference = cdc_weight)
   
   z_min <- pmin(z_height, z_weight)
+  }
+  
+  # MISSING INPUTS
+  missing <- is.na(age_years) | is.na(albumin) | is.na(bilirubin) |
+    is.na(inr) | is.na(creatinine) | is.na(dialysis) | is.na(z_min)
+  
+  .warn_missing(missing)
   
   # OPTN bounds
   age_bounded <- pmin(pmax(age_years, 1), 5.5)
