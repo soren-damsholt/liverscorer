@@ -73,7 +73,7 @@ test_that("lfi is vectorized", {
 })
 
 test_that("missing patient data produces NA only for that observation", {
-  result <- lfi(
+  expect_warning(result <- lfi(
     grip1 = c(25, 30),
     grip2 = c(26, 31),
     grip3 = c(27, 32),
@@ -82,7 +82,7 @@ test_that("missing patient data produces NA only for that observation", {
     semi_tandem = c(10, 10),
     tandem = c(10, 10),
     sex = c("male", "female")
-  )
+  ))
   
   expect_false(is.na(result[1]))
   expect_true(is.na(result[2]))

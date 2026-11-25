@@ -38,13 +38,20 @@ test_that("fib4 propagates missing data only to the affected patient", {
   for (name in names(baseline)) {
     inputs <- lapply(baseline, rep, times = 3)
     inputs[[name]][2] <- NA_real_
-    expect_equal(do.call(fib4, inputs), c(expected, NA_real_, expected), info = name)
+    
+    expect_warning(results <- do.call(fib4, inputs))
+    
+    expect_equal(results, c(expected, NA_real_, expected), info = name)
     inputs <- baseline
     inputs[[name]] <- NA
-    expect_true(is.na(do.call(fib4, inputs)), info = name)
+    
+    expect_warning(results <- do.call(fib4, inputs))
+    
+    expect_true(is.na(results), info = name)
   }
   inputs <- lapply(baseline, function(x) rep(NA, 2))
-  expect_true(all(is.na(do.call(fib4, inputs))))
+  expect_warning(results <- do.call(fib4, inputs))
+  expect_true(all(is.na(results)))
 })
 
 test_that("fib4 rejects invalid rounding settings", {

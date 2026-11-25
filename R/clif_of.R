@@ -67,6 +67,8 @@
 #'   from μmol/L to mg/dL (default = 0.0584).
 #' @param creatinine_conversion_factor Factor multiplied to creatinine to
 #'   convert from μmol/L to mg/dL (default = 0.0113).
+#' @param .warn_missing_data Logical setting defining if missing data should
+#'   produce a warning. Default = TRUE. This is a global package option.
 #'
 #' @returns Integer vector of CLIF-C Organ Failure scores ranging from 6 to 18.
 #' @export
@@ -93,7 +95,8 @@ clif_of <- function(bilirubin, creatinine, inr, encephalopathy,
                     mechanical_ventilation = FALSE,
                     oxygen_ratio_type = "pao2", units = "US",
                     bilirubin_conversion_factor = 0.0584,
-                    creatinine_conversion_factor = 0.0113) {
+                    creatinine_conversion_factor = 0.0113,
+                    .warn_missing_data = TRUE) {
   
   # Input validation
   ## SCALAR SETTINGS
@@ -154,6 +157,14 @@ clif_of <- function(bilirubin, creatinine, inr, encephalopathy,
      any(oxygen_ratio <= 0, na.rm = TRUE)
      ) {
     stop("Bilirubin, creatinine, INR, MAP and PaO2/SpO2 must all be greater than 0")
+  }
+  
+  missing <- is.na(bilirubin) | is.na(creatinine) |
+              is.na(inr) | is.na(map) | is.na(oxygen_ratio) |
+              is.na(encephalopathy)
+  
+  if(.warn_missing_data) {
+  .warn_missing(missing)
   }
   
   # UNIT CONVERSION: SI units to US

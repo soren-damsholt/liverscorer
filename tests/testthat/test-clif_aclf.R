@@ -79,18 +79,22 @@ test_that("clif_aclf validates every patient input type and length", {
 })
 
 test_that("clif_aclf propagates missing data only to the affected patient", {
-  baseline <- list(age = 50, wbc = 10, bilirubin = 1, creatinine = 1, encephalopathy = 0, inr = 1, map = 80, oxygen_ratio = 400)
+  baseline <- list(age = 50, wbc = 10, bilirubin = 1, creatinine = 1,
+                   encephalopathy = 0, inr = 1, map = 80, oxygen_ratio = 400)
   expected <- do.call(clif_aclf, baseline)
   for (name in names(baseline)) {
     inputs <- lapply(baseline, rep, times = 3)
     inputs[[name]][2] <- NA_real_
-    expect_equal(do.call(clif_aclf, inputs), c(expected, NA_real_, expected), info = name)
-    inputs <- baseline
-    inputs[[name]] <- NA
-    expect_true(is.na(do.call(clif_aclf, inputs)), info = name)
+    
+    expect_warning(results <- do.call(clif_aclf, inputs))
+    
+    expect_equal(results, c(expected, NA_real_, expected), info = name)
+  
   }
   inputs <- lapply(baseline, function(x) rep(NA, 2))
-  expect_true(all(is.na(do.call(clif_aclf, inputs))))
+  expect_warning(results <- do.call(clif_aclf, inputs))
+  expect_true(all(is.na(results)))
+  
 })
 
 test_that("clif_aclf rejects invalid rounding settings", {

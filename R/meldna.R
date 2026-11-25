@@ -95,6 +95,8 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = F
               is.na(inr) |
               is.na(sodium)
   
+  .warn_missing(missing)
+  
   # If unit == SI then convert to mg/dL
   if(unit == "SI"){
     creatinine <- creatinine * creatinine_conversion_factor
