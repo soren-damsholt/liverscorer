@@ -127,3 +127,7 @@ test_that("MELD-Na explicitly handles missing values as NA", {
   expect_true(is.na(result[2]))
   expect_false(is.na(result[3]))
 })
+
+test_that("MELD-Na rejects wrongly formatted numeric inputs", {
+  expect_error(meldna(creatinine = "1", bilirubin = 2, inr = 1, sodium = 138))
+})

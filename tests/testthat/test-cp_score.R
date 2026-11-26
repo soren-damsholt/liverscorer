@@ -154,3 +154,20 @@ test_that("function is fully vectorized", {
   expected <- c(6, 10, 14)
   expect_equal(calculated, expected)
 })
+
+## Input lengths
+test_that("Invalid input lenghts throws errors", {
+  expect_error(cp_score(bilirubin = c(22, 60),
+                        albumin = 22,
+                        inr = 2,
+                        ascites = "slight",
+                        he = 2,
+                        units = "SI"))
+  
+  expect_error(cp_score(bilirubin = numeric(0),
+                        albumin = 22,
+                        inr = 2,
+                        ascites = "slight",
+                        he = 2,
+                        units = "SI"))
+})

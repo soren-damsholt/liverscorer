@@ -202,3 +202,23 @@ test_that("CIRAS rejects empty patient-level inputs", {
     "at least one observation"
   )
 })
+
+test_that("CIRAS throws warning if failed lookup for valid input", {
+  
+  defective_lookup <- .ciras_lookup
+  defective_lookup$score <- NA_real_
+  
+  testthat::local_mocked_bindings(
+    .ciras_lookup = defective_lookup,
+    .package = "liverscoreR"
+  )
+  
+  expect_error(
+    ciras(ascites_discomfort = 25,
+          ascites_accumulation = FALSE,
+          diuretics = FALSE,
+          sodium = 140
+          ),
+    "Internal CIRAS lookup failed"
+    )
+})

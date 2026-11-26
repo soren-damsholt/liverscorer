@@ -909,3 +909,23 @@ test_that("PELD-Cr rejects invalid ages at anthropometric measurement", {
     )
   }
 })
+
+test_that("PELD-Cr accepts entirely missing logical sex vectors", {
+  
+  expect_warning(
+    calculated <- peld_cr(
+      age_years = rep(2, 3),
+      albumin = rep(1.5, 3),
+      bilirubin = rep(5, 3),
+      inr = rep(2.5, 3),
+      creatinine = rep(0.6, 3),
+      age_at_measurement = rep(24, 3),
+      sex = rep(NA, 3),
+      height = rep(75, 3),
+      weight = rep(10, 3)
+    ),
+    "Missing inputs"
+  )
+  
+  expect_equal(calculated, rep(NA_real_, 3))
+})

@@ -213,3 +213,32 @@ test_that("digits controls rounding", {
   )
   expect_equal(result_2, round(result_3, 2))
 })
+
+test_that("Wrong formated digits throws error", {
+  expect_error(
+    lfi(
+      grip_mean = 26,
+      time_to_stand = 7,
+      side_balance = 10,
+      semi_tandem = 10,
+      tandem = 10,
+      sex = "male",
+      grip_option = TRUE,
+      digits = -1
+    )
+  )
+})
+
+test_that("Input lengths must be equal", {
+  expect_error(
+    lfi(
+      grip_mean = 26,
+      time_to_stand = 7,
+      side_balance = numeric(0),
+      semi_tandem = 10,
+      tandem = 10,
+      sex = "male",
+      grip_option = TRUE
+    )
+  )
+})

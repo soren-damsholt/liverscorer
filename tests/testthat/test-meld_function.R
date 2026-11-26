@@ -125,3 +125,17 @@ test_that("Creatinine is bounded between 1 and 4", {
   expect_equal(result_low, expected_low)
   expect_equal(result_high, expected_high)
 })
+
+test_that("Invalid input lengths throws error", {
+  expect_error(meld(creatinine = numeric(0),
+                    bilirubin = 2,
+                    inr = 2)
+               )
+})
+
+test_that("Input lengths must have the same length", {
+  expect_error(meld(creatinine = c(1, 2),
+                    bilirubin = 2,
+                    inr = 2)
+               )
+})
