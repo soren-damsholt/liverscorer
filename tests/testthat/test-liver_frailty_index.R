@@ -7,8 +7,9 @@ test_that("lfi calculates expected values from three grip measurements", {
     side_balance = 10,
     semi_tandem = 10,
     tandem = 10,
-    sex = "male")
-  
+    sex = "male"
+  )
+
   expect_equal(result, 3.81)
 })
 
@@ -21,8 +22,9 @@ test_that("lfi gives same result using precalculated mean grip", {
     side_balance = 10,
     semi_tandem = 10,
     tandem = 10,
-    sex = "male")
-  
+    sex = "male"
+  )
+
   result_mean <- lfi(
     grip_mean = 26,
     time_to_stand = 10,
@@ -30,8 +32,9 @@ test_that("lfi gives same result using precalculated mean grip", {
     semi_tandem = 10,
     tandem = 10,
     sex = "male",
-    grip_option = TRUE)
-  
+    grip_option = TRUE
+  )
+
   expect_equal(result_trials, result_mean)
 })
 
@@ -43,8 +46,9 @@ test_that("lfi applies sex-specific grip adjustment", {
     semi_tandem = 10,
     tandem = 10,
     sex = "male",
-    grip_option = TRUE)
-  
+    grip_option = TRUE
+  )
+
   female <- lfi(
     grip_mean = 26,
     time_to_stand = 10,
@@ -52,8 +56,9 @@ test_that("lfi applies sex-specific grip adjustment", {
     semi_tandem = 10,
     tandem = 10,
     sex = "female",
-    grip_option = TRUE)
-  
+    grip_option = TRUE
+  )
+
   expect_false(identical(male, female))
 })
 
@@ -66,8 +71,9 @@ test_that("lfi is vectorized", {
     side_balance = c(10, 10),
     semi_tandem = c(10, 10),
     tandem = c(10, 9),
-    sex = c("male", "female"))
-  
+    sex = c("male", "female")
+  )
+
   expect_length(result, 2)
   expect_true(all(is.numeric(result)))
 })
@@ -83,7 +89,7 @@ test_that("missing patient data produces NA only for that observation", {
     tandem = c(10, 10),
     sex = c("male", "female")
   ))
-  
+
   expect_false(is.na(result[1]))
   expect_true(is.na(result[2]))
 })
@@ -95,7 +101,8 @@ test_that("invalid grip_option errors", {
       sex = "male",
       grip_option = NA
     ),
-    "grip_option must be TRUE or FALSE")
+    "grip_option must be TRUE or FALSE"
+  )
 })
 
 test_that("invalid sex errors", {
@@ -104,7 +111,8 @@ test_that("invalid sex errors", {
       25, 26, 27, 10, 10, 10, 10,
       sex = "other"
     ),
-    "sex")
+    "sex"
+  )
 })
 
 test_that("non-numeric clinical input errors", {
@@ -126,11 +134,13 @@ test_that("non-numeric clinical input errors", {
 test_that("balance measurements must be between 0 and 10", {
   expect_error(
     lfi(25, 26, 27, 10, 11, 10, 10, sex = "male"),
-    "side_balance")
-  
+    "side_balance"
+  )
+
   expect_error(
     lfi(25, 26, 27, 10, 10, -1, 10, sex = "male"),
-    "semi_tandem")
+    "semi_tandem"
+  )
 })
 
 test_that("chair stand time must be between 0 and 60", {
@@ -138,7 +148,7 @@ test_that("chair stand time must be between 0 and 60", {
     lfi(25, 26, 27, 61, 10, 10, 10, sex = "male"),
     "time_to_stand"
   )
-  
+
   expect_error(
     lfi(25, 26, 27, -1, 10, 10, 10, sex = "male"),
     "time_to_stand"
@@ -172,7 +182,8 @@ test_that("patient-level inputs must have equal lengths", {
       tandem = c(10, 10),
       sex = c("male", "female")
     ),
-    "same length")
+    "same length"
+  )
 })
 
 test_that("zero chair stand time is treated as zero stands per second", {
@@ -194,7 +205,7 @@ test_that("digits controls rounding", {
     sex = "male",
     digits = 2
   )
-  
+
   result_3 <- lfi(
     25, 26, 27, 10, 10, 10, 10,
     sex = "male",

@@ -23,15 +23,15 @@
 #'   EASL-CLIF Consortium. Development and validation of a prognostic score to
 #'   predict mortality in patients with acute-on-chronic liver failure. J
 #'   Hepatol. 2014 Nov;61(5):1038-47. doi: 10.1016/j.jhep.2014.06.012. Epub 2014
-#'   Jun 17. PMID: 24950482. 
-#'   
+#'   Jun 17. PMID: 24950482.
+#'
 #'   Engelmann, C., Thomsen, K.L., Zakeri, N. et al.
 #'   Validation of CLIF-C ACLF score to define a threshold for futility of
 #'   intensive care support for patients with acute-on-chronic liver failure.
 #'   Crit Care 22, 254 (2018). https://doi.org/10.1186/s13054-018-2156-0
-#' 
+#'
 #' @seealso [clif_of()] [clif_ad()]
-#' 
+#'
 #' @param age Numeric vector of age in years.
 #' @param wbc Numeric vector of white blood cell count in \eqn{10^9/L}.
 #' @param bilirubin Numeric vector of bilirubin in mg/dL (default) or \eqn{\mu
@@ -68,12 +68,14 @@
 #' @export
 #'
 #' @examples
-#' clif_aclf(age = c(60, 80, 90), wbc = c(30, 50, 80),
-#'  bilirubin = c(80, 20, 250), creatinine = c(80, 120, 130),
+#' clif_aclf(
+#'   age = c(60, 80, 90), wbc = c(30, 50, 80),
+#'   bilirubin = c(80, 20, 250), creatinine = c(80, 120, 130),
 #'   encephalopathy = c(1, 2, 3), inr = c(2, 1, 2.5),
-#'    map = c(70, 65, 66), oxygen_ratio = c(340, 280, 240),
-#'     rrt = FALSE, vasopressors = FALSE, units = "SI",
-#'      oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE)
+#'   map = c(70, 65, 66), oxygen_ratio = c(340, 280, 240),
+#'   rrt = FALSE, vasopressors = FALSE, units = "SI",
+#'   oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE
+#' )
 #' # 52 66 90
 clif_aclf <- function(age, wbc, bilirubin, creatinine, encephalopathy,
                       inr, map, oxygen_ratio, oxygen_ratio_type = "pao2",
@@ -84,61 +86,69 @@ clif_aclf <- function(age, wbc, bilirubin, creatinine, encephalopathy,
     age = age,
     wbc = wbc
   )
-  
-  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+
+  if (!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))) {
     stop("Age and white blood cell count(wbc) must be numeric")
   }
-  
+
   if (!is.numeric(digits) ||
-      length(digits) != 1L ||
-      is.na(digits) ||
-      digits < 0 ||
-      digits %% 1 != 0) {
-    stop("digits must be a single non-negative integer")}
-  
+    length(digits) != 1L ||
+    is.na(digits) ||
+    digits < 0 ||
+    digits %% 1 != 0) {
+    stop("digits must be a single non-negative integer")
+  }
+
   if (length(age) == 0L || length(wbc) == 0L) {
-    stop("age and wbc must contain at least one observation")}
-  
+    stop("age and wbc must contain at least one observation")
+  }
+
   if (any(age <= 0, na.rm = TRUE)) {
-    stop("age must be greater than 0")}
-  
+    stop("age must be greater than 0")
+  }
+
   if (any(wbc <= 0, na.rm = TRUE)) {
-    stop("wbc must be greater than 0")}
-  
+    stop("wbc must be greater than 0")
+  }
+
   # CALCULATION
   ## CLIF OF SCORE:
-  clif_of_score <- clif_of(bilirubin = bilirubin, creatinine = creatinine,
-                           inr = inr, encephalopathy = encephalopathy,
-                           map = map, oxygen_ratio = oxygen_ratio,
-                           oxygen_ratio_type = oxygen_ratio_type, rrt = rrt,
-                           mechanical_ventilation = mechanical_ventilation,
-                           vasopressors = vasopressors,
-                           units = units, .warn_missing_data = FALSE)
-  
+  clif_of_score <- clif_of(
+    bilirubin = bilirubin, creatinine = creatinine,
+    inr = inr, encephalopathy = encephalopathy,
+    map = map, oxygen_ratio = oxygen_ratio,
+    oxygen_ratio_type = oxygen_ratio_type, rrt = rrt,
+    mechanical_ventilation = mechanical_ventilation,
+    vasopressors = vasopressors,
+    units = units, .warn_missing_data = FALSE
+  )
+
   ## Input length validation
-  input_lengths <- c(age = length(age),
-                     wbc = length(wbc),
-                     clif_of = length(clif_of_score))
-  
+  input_lengths <- c(
+    age = length(age),
+    wbc = length(wbc),
+    clif_of = length(clif_of_score)
+  )
+
   if (length(unique(input_lengths)) != 1L) {
-    stop("age, wbc and CLIF-C OF inputs must have the same length")}
-  
+    stop("age, wbc and CLIF-C OF inputs must have the same length")
+  }
+
   ## MISSING VALUES
-  missing <- is.na(clif_of_score) | 
-             is.na(age) |
-             is.na(wbc)
-  
+  missing <- is.na(clif_of_score) |
+    is.na(age) |
+    is.na(wbc)
+
   .warn_missing(missing)
-  
-  ## CLIF ACLF SCORE  
+
+  ## CLIF ACLF SCORE
   clif_c_aclf <- 10 * (0.33 * clif_of_score +
-                       0.04 * age +
-                       0.63 * log(wbc) - 2)
-  
+    0.04 * age +
+    0.63 * log(wbc) - 2)
+
   ## Score is bounded between 0 and 100
   clif_c_aclf <- pmax(0, pmin(100, clif_c_aclf))
-  
+
   clif_c_aclf[missing] <- NA_real_
   round(clif_c_aclf, digits = digits)
 }
-

@@ -29,7 +29,7 @@
 #'   the Accurate Non-Invasive Diagnosis of Advanced NAFLD Fibrosis. Am J
 #'   Gastroenterol. 2017 May;112(5):740-751. doi: 10.1038/ajg.2016.453. Epub
 #'   2016 Oct 11. PMID: 27725647; PMCID: PMC5418560.
-#'   
+#'
 #' @seealso [elf()]
 #'
 #' @param age Numeric vector of the age in years
@@ -49,9 +49,7 @@
 #' # The function also works on vectors of several measurements
 #' fib4(age = c(45, 35, 65), asat = c(64, 20, 230), platelets = c(120, 80, 86), alat = c(80, 14, 180))
 #' # 2.68, 2.34, 12.96
-
 fib4 <- function(age, asat, platelets, alat, digits = 2) {
-  
   ## Input validation
   numeric_input <- list(
     age = age,
@@ -59,51 +57,53 @@ fib4 <- function(age, asat, platelets, alat, digits = 2) {
     platelets = platelets,
     alat = alat
   )
-  
-  if(!all(vapply(numeric_input, .is_numeric_or_na, logical(1)))) {
+
+  if (!all(vapply(numeric_input, .is_numeric_or_na, logical(1)))) {
     stop("Input vectors must be numeric")
-  } 
-  
-  if(!is.numeric(digits) || 
-     length(digits) != 1L ||
-     is.na(digits) || 
-     digits < 0 ||
-     digits %% 1 != 0) {
+  }
+
+  if (!is.numeric(digits) ||
+    length(digits) != 1L ||
+    is.na(digits) ||
+    digits < 0 ||
+    digits %% 1 != 0) {
     stop("digits must be a single non-negative integer")
   }
-  
-  if(any(vapply(numeric_input, function(x) any(x <= 0, na.rm = TRUE),logical(1)))) {
+
+  if (any(vapply(numeric_input, function(x) any(x <= 0, na.rm = TRUE), logical(1)))) {
     stop("Input vectors cannot be negative or zero")
   }
-  
+
   ## Input length validation
   input_lengths <- vapply(numeric_input, length, integer(1))
-  
-  if(any(input_lengths == 0L)) {
-    stop("Input vectors must contain at least one observation")}
-  
-  if (length(unique(input_lengths)) != 1){
-    stop("All input vectors must have the same length")}
-  
+
+  if (any(input_lengths == 0L)) {
+    stop("Input vectors must contain at least one observation")
+  }
+
+  if (length(unique(input_lengths)) != 1) {
+    stop("All input vectors must have the same length")
+  }
+
   ## Age warning
-  if(any(age >= 65 | age <= 35, na.rm = TRUE)) {
+  if (any(age >= 65 | age <= 35, na.rm = TRUE)) {
     warning("Use with caution when interpreting results for patients aged \u2265
             35 or \u2265 years, as the score has been shown to be less reliable
             in these age groups")
   }
-  
+
   ## Calculation
-  missing <- is.na(age) | 
-              is.na(asat) |
-              is.na(platelets) |
-              is.na(alat)
-  
+  missing <- is.na(age) |
+    is.na(asat) |
+    is.na(platelets) |
+    is.na(alat)
+
   .warn_missing(missing)
-   
-    score <- (age * asat) /
+
+  score <- (age * asat) /
     (platelets * sqrt(alat))
-  
+
   score[missing] <- NA_real_
-  
+
   round(score, digits = digits)
 }

@@ -1,8 +1,8 @@
 #' Model for End-stage Liver Disease - Sodium score
 #'
-#' Calculates the Model for End-Stage Liver Disease incorporating serum sodium (MELD-Na) score. 
+#' Calculates the Model for End-Stage Liver Disease incorporating serum sodium (MELD-Na) score.
 #' The calculation follows the 2016 MELD-Na formulation
-#' 
+#'
 #' @details
 #' The MELD-Na score is calculated from S-creatinine, S-bilirubin, INR and S-sodium.
 #' Creatinine, bilirubin and INR are bounded so values < 1 are set to 1. Sodium is bounded between
@@ -12,8 +12,8 @@
 #'    \item MELD(i) is calculated as:
 #'    \deqn{
 #'      MELD(i) = 10 \times round(
-#'        0.957 \times \log(Creatinine) + 
-#'        0.378 \times \log(Bilirubin) + 
+#'        0.957 \times \log(Creatinine) +
+#'        0.378 \times \log(Bilirubin) +
 #'        1.120 \times \log(INR) + 0.643, digits = 10)}
 #'    \item If MELD(i) > 11, the sodium adjustment is applied:
 #'    \deqn{
@@ -21,13 +21,13 @@
 #'        0.033\,MELD(i)(137-Na)
 #'      }
 #'    }
-#'    
+#'
 #' If one or more required input values are missing for an observation, the corresponding MELD-Na score is returned as "Na"
-#' 
+#'
 #' The original MELD-Na model was described by Kim et al. (2008).
 #' This function implements the subsequent 2016 MELD-Na formulation
 #' adopted for livertransplant allocation in the United States.
-#' 
+#'
 #' @references
 #' Kim WR, Biggins SW, Kremers WK, Wiesner RH, Kamath PS, Benson JT,
 #' Edwards E, Therneau TM. Hyponatremia and mortality among patients
@@ -38,7 +38,7 @@
 #' effective January 11, 2016, adding serum sodium to MELD calculation.
 #'
 #' @seealso [meld()] for the original MELD score
-#' 
+#'
 #' @param creatinine Serum creatinine in either mg/dL (US units) or μmol/L (SI units).
 #' @param bilirubin  Serum total bilirubin in either mg/dL (US units) or μmol/L (SI units).
 #' @param inr International normalized ratio of coagulation factor II, VII and X.
@@ -53,30 +53,29 @@
 #' @export
 #'
 #' @examples
-#'   meldna(creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, unit = "US", dialysis = FALSE) 
-#'   # 6. 
-#'   
-#'   # This can be simplified to:
-#'   meldna(1, 1, 1, 125)
-#'   
-#'   # SI units can be applied and are automatically converted to mg/dL
-#'   meldna(120, 80, 2, 125, unit = "SI", dialysis = FALSE)
-#'   # 30
-#'   
-#'   # If the patient has received haemodialysis, creatinine is hardcoded to 4.0. 
-#'   # This setting can be enabled by setting "dialysis" to TRUE
-#'   meldna(120, 80, 2, 125, unit = "SI", dialysis = TRUE)
-#'   # 36
-#'   
+#' meldna(creatinine = 1, bilirubin = 1, inr = 1, sodium = 125, unit = "US", dialysis = FALSE)
+#' # 6.
+#'
+#' # This can be simplified to:
+#' meldna(1, 1, 1, 125)
+#'
+#' # SI units can be applied and are automatically converted to mg/dL
+#' meldna(120, 80, 2, 125, unit = "SI", dialysis = FALSE)
+#' # 30
+#'
+#' # If the patient has received haemodialysis, creatinine is hardcoded to 4.0.
+#' # This setting can be enabled by setting "dialysis" to TRUE
+#' meldna(120, 80, 2, 125, unit = "SI", dialysis = TRUE)
+#' # 36
+#'
 meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = FALSE,
                    creatinine_conversion_factor = 0.0113, bilirubin_conversion_factor = 0.0584,
-                   digits = 0){
-  
+                   digits = 0) {
   # Catch if unit or dialysis is formatted wrong
   .check_scalar_choice(unit, c("SI", "US"), "unit")
-  
+
   .check_logical(dialysis, "dialysis")
-  
+
   # Catch if numeric values are non-numeric:
   numeric_inputs <- list(
     creatinine = creatinine,
@@ -84,50 +83,49 @@ meldna <- function(creatinine, bilirubin, inr, sodium, unit = "US", dialysis = F
     inr = inr,
     sodium = sodium
   )
-  
-  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+
+  if (!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))) {
     stop("Creainine, inr, bilirubin and sodium must be numeric")
   }
-  
+
   # Locate missing input values
-  missing <- is.na(creatinine) | 
-              is.na(bilirubin) |
-              is.na(inr) |
-              is.na(sodium)
-  
+  missing <- is.na(creatinine) |
+    is.na(bilirubin) |
+    is.na(inr) |
+    is.na(sodium)
+
   .warn_missing(missing)
-  
+
   # If unit == SI then convert to mg/dL
-  if(unit == "SI"){
+  if (unit == "SI") {
     creatinine <- creatinine * creatinine_conversion_factor
     bilirubin <- bilirubin * bilirubin_conversion_factor
-
   }
-  
+
   # If dialysis == yes, then hardcode creatinine to 4.0 mg/dL
   creatinine[dialysis] <- 4.0
-  
+
   # Set lower bounds on measured values
   creatinine <- pmin(pmax(creatinine, 1), 4)
   bilirubin <- pmax(bilirubin, 1)
   inr <- pmax(inr, 1)
-  
+
   # Sodium bound for MELD-Na
   sodium <- pmin(pmax(sodium, 125), 137)
-  
+
   # Calculate MELD(i)
   meldi <- round(0.957 * log(creatinine) +
-            0.378 * log(bilirubin) +
-            1.120 * log(inr) + 0.643, digits = 10) * 10
-  
+    0.378 * log(bilirubin) +
+    1.120 * log(inr) + 0.643, digits = 10) * 10
+
   # If MELD(i) > 11, then calculate MELDNa
   index <- !is.na(meldi) & meldi > 11
-  
-  
+
+
   meldi[index] <- meldi[index] + 1.32 * (137 - sodium[index]) -
-      ((0.033 * meldi[index]) * (137 - sodium[index]))
-  
+    ((0.033 * meldi[index]) * (137 - sodium[index]))
+
   meldi[missing] <- NA_real_
-  
+
   round(meldi, digits = digits)
 }

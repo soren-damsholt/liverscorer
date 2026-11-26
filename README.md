@@ -57,20 +57,26 @@ library(liverscoreR)
 meld(creatinine = 120, bilirubin = 80, inr = 2, dialysis = FALSE, unit = "SI")
 #> [1] 23
 
-lfi(grip1 = 23, grip2 = 25, grip3 = 22, time_to_stand = 14, side_balance = 10,
-    semi_tandem = 10, tandem = 7, sex = "male")
+lfi(
+  grip1 = 23, grip2 = 25, grip3 = 22, time_to_stand = 14, side_balance = 10,
+  semi_tandem = 10, tandem = 7, sex = "male"
+)
 #> [1] 4.38
 
 ## However it can also work with large vectors.
 set.seed(123456)
-meld_data <- data.frame(creatinine = sample(150, 20),
-           bilirubin = sample(120, 20),
-           inr = sample(2.5, 20, replace = TRUE))
+meld_data <- data.frame(
+  creatinine = sample(150, 20),
+  bilirubin = sample(120, 20),
+  inr = sample(2.5, 20, replace = TRUE)
+)
 
-meld_data$meld <- meld(creatinine = meld_data$creatinine, 
-                        bilirubin = meld_data$bilirubin,
-                        inr = meld_data$inr, dialysis = FALSE,
-                        unit = "SI")
+meld_data$meld <- meld(
+  creatinine = meld_data$creatinine,
+  bilirubin = meld_data$bilirubin,
+  inr = meld_data$inr, dialysis = FALSE,
+  unit = "SI"
+)
 
 ## This should also work seemlessly with the tidyverse functions
 library(tidyverse)
@@ -85,11 +91,13 @@ library(tidyverse)
 #> ✖ dplyr::lag()    masks stats::lag()
 #> ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
-meld_data %>% 
-  mutate(meld2 = meld(creatinine = creatinine,
-                      bilirubin = bilirubin, 
-                      inr = inr, dialysis = FALSE,
-                      unit = "SI"))
+meld_data %>%
+  mutate(meld2 = meld(
+    creatinine = creatinine,
+    bilirubin = bilirubin,
+    inr = inr, dialysis = FALSE,
+    unit = "SI"
+  ))
 #>    creatinine bilirubin inr meld meld2
 #> 1          60        67   1   12    12
 #> 2          42        98   2   21    21
@@ -119,10 +127,14 @@ meld_data %>%
 ## is harcoded to 4 mg/dL.
 ## Several package functions has this feature buildt in. See the documentation.
 
-meld_data %>% 
-  mutate(dialysis = sample(c(TRUE, FALSE), 20, replace = TRUE),
-         meld2 = meld(creatinine, bilirubin, inr, dialysis = dialysis,
-                     unit = "SI"))
+meld_data %>%
+  mutate(
+    dialysis = sample(c(TRUE, FALSE), 20, replace = TRUE),
+    meld2 = meld(creatinine, bilirubin, inr,
+      dialysis = dialysis,
+      unit = "SI"
+    )
+  )
 #>    creatinine bilirubin inr meld dialysis meld2
 #> 1          60        67   1   12    FALSE    12
 #> 2          42        98   2   21     TRUE    34

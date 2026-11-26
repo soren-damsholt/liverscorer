@@ -1,7 +1,7 @@
 #' CLIF-C Organ Failure (OF) score
-#' 
+#'
 #' Vectorized function for calculating the CLIF-C OF score.
-#'  
+#'
 #' @details Calculates the CLIF-C Organ Failure (OF) score described by Jalan et
 #' al. (2014). Six organ systems are assigned subscores from 1 to 3: liver,
 #' kidney, coagulation, brain, circulation, and respiration. The subscores are
@@ -74,35 +74,40 @@
 #' @export
 #'
 #' @examples
-#' clif_of(6, 2, 2, 2, 70, 340, rrt = FALSE, vasopressors = FALSE, units = "US",
-#'  oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE)
+#' clif_of(6, 2, 2, 2, 70, 340,
+#'   rrt = FALSE, vasopressors = FALSE, units = "US",
+#'   oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE
+#' )
 #' # 10
 #'
 #' # The function handles SI units and internally converts them to mg/dL before calculating the score.
-#' clif_of(120, 80, 2, 2, 70, 340, rrt = FALSE, vasopressors = FALSE, units = "SI",
-#'  oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE)
-#' #9
+#' clif_of(120, 80, 2, 2, 70, 340,
+#'   rrt = FALSE, vasopressors = FALSE, units = "SI",
+#'   oxygen_ratio_type = "pao2", mechanical_ventilation = FALSE
+#' )
+#' # 9
 #'
 #' # This function is fully vectorized, so it can calculate multiple values at once:
-#' clif_of(bilirubin = c(12,8,6) , creatinine = c(3.3, 2, 1), inr = c(2, 1.8, 1.2),
-#'  encephalopathy = c(0, 2, 4), map = c(60, 70, 80), rrt = c(FALSE, TRUE, FALSE),
+#' clif_of(
+#'   bilirubin = c(12, 8, 6), creatinine = c(3.3, 2, 1), inr = c(2, 1.8, 1.2),
+#'   encephalopathy = c(0, 2, 4), map = c(60, 70, 80), rrt = c(FALSE, TRUE, FALSE),
 #'   vasopressors = c(TRUE, FALSE, TRUE), units = "US", oxygen_ratio_type = "spo2",
-#'    oxygen_ratio = c(358, 350, 214), mechanical_ventilation = c(FALSE, TRUE, TRUE))
+#'   oxygen_ratio = c(358, 350, 214), mechanical_ventilation = c(FALSE, TRUE, TRUE)
+#' )
 #' # 12 12 13
 clif_of <- function(bilirubin, creatinine, inr, encephalopathy,
-                    map, oxygen_ratio, 
+                    map, oxygen_ratio,
                     rrt = FALSE, vasopressors = FALSE,
                     mechanical_ventilation = FALSE,
                     oxygen_ratio_type = "pao2", units = "US",
                     bilirubin_conversion_factor = 0.0584,
                     creatinine_conversion_factor = 0.0113,
                     .warn_missing_data = TRUE) {
-  
   # Input validation
   ## SCALAR SETTINGS
   .check_scalar_choice(units, c("US", "SI"), "units")
   .check_scalar_choice(oxygen_ratio_type, c("pao2", "spo2"), "oxygen_ratio_type")
-  
+
   ## NUMERIC INPUTS
   numeric_inputs <- list(
     bilirubin = bilirubin,
@@ -110,114 +115,115 @@ clif_of <- function(bilirubin, creatinine, inr, encephalopathy,
     inr = inr,
     encephalopathy = encephalopathy,
     map = map,
-    oxygen_ratio = oxygen_ratio)
-  
+    oxygen_ratio = oxygen_ratio
+  )
+
   ## NUMERIC TYPES
-  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+  if (!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))) {
     stop("Bilirubin, creatinine, INR, West-Haven grade, MAP and PaO2/SpO2 must be numeric")
   }
   ## CATEGORICAL SETTINGS/LENGTH
-  if(any(!is.na(encephalopathy) &
-         !encephalopathy %in% 0:4)) {
+  if (any(!is.na(encephalopathy) &
+    !encephalopathy %in% 0:4)) {
     stop("Encephalopathy (West-Haven grade) should be an integer between 0 and 4")
   }
-  
+
   .check_logical(rrt, "Renal replacement therapy (rrt)")
   .check_logical(vasopressors, "Vasopressors")
   .check_logical(mechanical_ventilation, "Ventilation")
-  
+
   input_lengths <- vapply(numeric_inputs, length, integer(1))
   if (any(input_lengths == 0L)) {
-    stop("Input vectors must contain at least one observation")}
-  
+    stop("Input vectors must contain at least one observation")
+  }
+
   if (length(unique(input_lengths)) != 1L) {
-    stop("All patient-level input vectors must have the same length")}
-  
+    stop("All patient-level input vectors must have the same length")
+  }
+
   n <- input_lengths[1]
   .check_scalar_or_length(rrt, n, "Renal replacement therapy (rrt)")
   .check_scalar_or_length(vasopressors, n, "Vasopressors")
   .check_scalar_or_length(mechanical_ventilation, n, "Ventilation")
-  
+
   # EXPAND INTENTIONAL SCALAR SETTINGS:
-  if(length(rrt) == 1L) {
+  if (length(rrt) == 1L) {
     rrt <- rep(rrt, n)
   }
-  if(length(vasopressors) == 1L) {
+  if (length(vasopressors) == 1L) {
     vasopressors <- rep(vasopressors, n)
   }
-  if(length(mechanical_ventilation) == 1L) {
+  if (length(mechanical_ventilation) == 1L) {
     mechanical_ventilation <- rep(mechanical_ventilation, n)
   }
-  
-  # Unit validation 
-  if(any(bilirubin <= 0, na.rm = TRUE) ||
-     any(creatinine <= 0, na.rm = TRUE) ||
-     any(inr <= 0, na.rm = TRUE) ||
-     any(map <= 0, na.rm = TRUE) ||
-     any(oxygen_ratio <= 0, na.rm = TRUE)
-     ) {
+
+  # Unit validation
+  if (any(bilirubin <= 0, na.rm = TRUE) ||
+    any(creatinine <= 0, na.rm = TRUE) ||
+    any(inr <= 0, na.rm = TRUE) ||
+    any(map <= 0, na.rm = TRUE) ||
+    any(oxygen_ratio <= 0, na.rm = TRUE)
+  ) {
     stop("Bilirubin, creatinine, INR, MAP and PaO2/SpO2 must all be greater than 0")
   }
-  
+
   missing <- is.na(bilirubin) | is.na(creatinine) |
-              is.na(inr) | is.na(map) | is.na(oxygen_ratio) |
-              is.na(encephalopathy)
-  
-  if(.warn_missing_data) {
-  .warn_missing(missing)
+    is.na(inr) | is.na(map) | is.na(oxygen_ratio) |
+    is.na(encephalopathy)
+
+  if (.warn_missing_data) {
+    .warn_missing(missing)
   }
-  
+
   # UNIT CONVERSION: SI units to US
-  if(units == "SI") {
+  if (units == "SI") {
     bilirubin <- bilirubin * bilirubin_conversion_factor
     creatinine <- creatinine * creatinine_conversion_factor
   }
-  
+
   # OF SCORE CALCULATION:
   ## Liver failure
   liver <- rep(NA_integer_, length(bilirubin))
   liver[which(bilirubin < 6)] <- 1L
-  liver[which(bilirubin >=6 & bilirubin < 12)] <- 2L
+  liver[which(bilirubin >= 6 & bilirubin < 12)] <- 2L
   liver[which(bilirubin >= 12)] <- 3L
-  
+
   ## Kidney failure
   kidney <- rep(NA_integer_, length(creatinine))
   kidney[which(rrt | creatinine >= 3.5)] <- 3
   kidney[which(creatinine >= 2 & creatinine < 3.5 & !rrt)] <- 2
   kidney[which(creatinine < 2 & !rrt)] <- 1
-  
+
   ## Coagulation failure
   coag <- rep(NA_integer_, length(inr))
   coag[which(inr >= 2.5)] <- 3
   coag[which(inr >= 2 & inr < 2.5)] <- 2
   coag[which(inr < 2)] <- 1
-    
+
   ## Brain failure
   brain <- rep(NA_integer_, length(encephalopathy))
   brain[which(encephalopathy >= 3)] <- 3
   brain[which(encephalopathy >= 1 & encephalopathy < 3)] <- 2
   brain[which(encephalopathy == 0)] <- 1
-  
+
   ## Circulation failure
   circulation <- rep(NA_integer_, length(map))
   circulation[which(vasopressors)] <- 3
   circulation[which(map < 70 & !vasopressors)] <- 2
   circulation[which(map >= 70 & !vasopressors)] <- 1
-  
+
   ## Respiratory failure
   respiration <- rep(NA_integer_, length(oxygen_ratio))
-  if(oxygen_ratio_type == "pao2") {
-  respiration[which(oxygen_ratio > 300)] <- 1
-  respiration[which(oxygen_ratio > 200 & oxygen_ratio <= 300)] <- 2
-  respiration[which(oxygen_ratio <= 200 | mechanical_ventilation)] <- 3
-  } else if(oxygen_ratio_type == "spo2"){
-  respiration[which(oxygen_ratio > 357)] <- 1
-  respiration[which(oxygen_ratio > 214 & oxygen_ratio <= 357)] <- 2
-  respiration[which(oxygen_ratio <= 214 | mechanical_ventilation)] <- 3
+  if (oxygen_ratio_type == "pao2") {
+    respiration[which(oxygen_ratio > 300)] <- 1
+    respiration[which(oxygen_ratio > 200 & oxygen_ratio <= 300)] <- 2
+    respiration[which(oxygen_ratio <= 200 | mechanical_ventilation)] <- 3
+  } else if (oxygen_ratio_type == "spo2") {
+    respiration[which(oxygen_ratio > 357)] <- 1
+    respiration[which(oxygen_ratio > 214 & oxygen_ratio <= 357)] <- 2
+    respiration[which(oxygen_ratio <= 214 | mechanical_ventilation)] <- 3
   }
 
   of_score <- liver + kidney + coag + brain + circulation + respiration
   of_score
 }
-
-

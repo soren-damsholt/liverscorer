@@ -54,78 +54,80 @@
 #' @export
 #'
 #' @examples
-#'   # US units (mg/dL)
-#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = FALSE)
-#'   # 20
+#' # US units (mg/dL)
+#' meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = FALSE)
+#' # 20
 #'
-#'   # or simply:
-#'   meld(1.2, 3.0, 2.0)
+#' # or simply:
+#' meld(1.2, 3.0, 2.0)
 #'
-#'   #If the patient received dialysis at the time of sampling,
-#'   #creatinine is hard-coded to 4.0, regardless of measured value.
-#'   meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = TRUE)
-#'   # 32
+#' # If the patient received dialysis at the time of sampling,
+#' # creatinine is hard-coded to 4.0, regardless of measured value.
+#' meld(creatinine = 1.2, bilirubin = 3.0, inr = 2.0, units = "US", dialysis = TRUE)
+#' # 32
 #'
-#'   #If you are using SI units, you need to change the "units" setting to "SI",
-#'   #which will then automatically convert your values before caluculating a MELD score.
-#'   meld(creatinine = 120, bilirubin = 80, inr = 2.0, units = "SI") 
-#'   # should return 23
+#' # If you are using SI units, you need to change the "units" setting to "SI",
+#' # which will then automatically convert your values before caluculating a MELD score.
+#' meld(creatinine = 120, bilirubin = 80, inr = 2.0, units = "SI")
+#' # should return 23
 meld <- function(creatinine, bilirubin, inr, dialysis = FALSE, units = "US",
                  creatinine_conversion_factor = 0.0113,
                  bilirubin_conversion_factor = 0.0584,
-                 digits = 0){
-  #Input check
+                 digits = 0) {
+  # Input check
   .check_scalar_choice(units, c("US", "SI"), "units")
   .check_logical(dialysis, "dialysis")
-  
-  numeric_inputs <- list(creatinine = creatinine,
-                         bilirubin = bilirubin,
-                         inr = inr)
+
+  numeric_inputs <- list(
+    creatinine = creatinine,
+    bilirubin = bilirubin,
+    inr = inr
+  )
   input_lengths <- vapply(numeric_inputs, length, integer(1))
-  
-  if(any(input_lengths == 0L)) {
+
+  if (any(input_lengths == 0L)) {
     stop("Input vectors must contain at least one observation")
   }
-  if(length(unique(input_lengths)) != 1L) {
+  if (length(unique(input_lengths)) != 1L) {
     stop("All patient-level input vectors must have the same length")
   }
-  
+
   n <- input_lengths[1]
   .check_scalar_or_length(dialysis, n, "dialysis")
-  
-  if(length(dialysis) == 1L) {
+
+  if (length(dialysis) == 1L) {
     dialysis <- rep(dialysis, n)
   }
-  
+
   # Locate missing values
   missing <- is.na(creatinine) |
-                   is.na(bilirubin) |
-                   is.na(inr)
-  
+    is.na(bilirubin) |
+    is.na(inr)
+
   .warn_missing(missing)
-  
+
   # Convert SI units to mg/dL
-  if(units == "SI"){
+  if (units == "SI") {
     creatinine <- creatinine * creatinine_conversion_factor
     bilirubin <- bilirubin * bilirubin_conversion_factor
   }
-  
+
   # If dialysis
   creatinine[dialysis] <- 4.0
-  
+
   # Set MELD minimum values
   creatinine <- pmin(pmax(creatinine, 1), 4)
   bilirubin <- pmax(bilirubin, 1)
   inr <- pmax(inr, 1)
-  
-  
+
+
   # Calculate meld
   meld <- (0.957 * log(creatinine) +
-     0.378 * log(bilirubin)+
-     1.120 * log(inr) +
-     0.643)*10
-  
+    0.378 * log(bilirubin) +
+    1.120 * log(inr) +
+    0.643) * 10
+
   meld[missing] <- NA_real_
-    
+
   return(round(meld, digits = digits))
 }

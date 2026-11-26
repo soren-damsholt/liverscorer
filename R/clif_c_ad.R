@@ -3,9 +3,9 @@
 #' Vectorized function for calculating the CLIF-C Acute Decompensation (CLIF-C
 #' AD) score.
 #'
-#' @details Calculates the CLIF-C Acute Decompensation (CLIF-C AD) score, as 
+#' @details Calculates the CLIF-C Acute Decompensation (CLIF-C AD) score, as
 #' described by Jalan et al. (2015). The score was developed as a prognostic tool
-#' for assessing hospitalized patients with acutely decompensated cirrhosis, but 
+#' for assessing hospitalized patients with acutely decompensated cirrhosis, but
 #' not ACLF. If the patient has ACLF you should consider the [clif_aclf()] score.
 #' The CLIF-C AD score is calculated as:
 #' \deqn{10 \times \left(0.03 \times age + 0.66 \times \log(creatinine) +
@@ -32,7 +32,7 @@
 #'   Consortium. The CLIF Consortium Acute Decompensation score (CLIF-C ADs) for
 #'   prognosis of hospitalised cirrhotic patients without acute-on-chronic liver
 #'   failure. J. Hepatol. 2015, 62 (4), 831–840. DOI: 10.1016/j.jhep.2014.11.012
-#' 
+#'
 #' @param age Numeric vector of age in years.
 #' @param creatinine Numeric vector of creatinine in mg/dL (default) or
 #'   \eqn{\mu mol/L} when unit = "SI".
@@ -54,35 +54,34 @@
 #' @examples
 #' clif_ad(age = 50, creatinine = 2, inr = 2, wbc = 20, sodium = 137, unit = "US")
 #' # 69
-#' 
+#'
 #' # Arguments may also be supplied positionally:
 #' clif_ad(50, 2, 2, 20, 137)
 #' # 69
-#'  
+#'
 #' # Creatinine supplied in SI units is converted internally to mg/dL.
 #' clif_ad(age = 50, creatinine = 90, inr = 2, wbc = 20, sodium = 137, unit = "SI")
 #' # 65
-#' 
+#'
 #' # The function is fully vectorized:
-#' clif_ad(age = c(50, 70, 22), creatinine = c(90, 120, 70),
-#'  inr = c(2, 1.8, 2.2), wbc = c(20, 60, 11),
-#'   sodium = c(137, 122, 140), unit = "SI")
-#'  # 65, 88, 50
-
-
+#' clif_ad(
+#'   age = c(50, 70, 22), creatinine = c(90, 120, 70),
+#'   inr = c(2, 1.8, 2.2), wbc = c(20, 60, 11),
+#'   sodium = c(137, 122, 140), unit = "SI"
+#' )
+#' # 65, 88, 50
 clif_ad <- function(age, creatinine, inr,
                     wbc, sodium,
-                    digits = 0, units = "US"){
-  
+                    digits = 0, units = "US") {
   # Check that digits is either default or not provided
   if (!is.numeric(digits) ||
-      length(digits) != 1 ||
-      is.na(digits) ||
-      digits < 0 ||
-      digits %% 1 != 0) {
+    length(digits) != 1 ||
+    is.na(digits) ||
+    digits < 0 ||
+    digits %% 1 != 0) {
     stop("digits must be a single non-negative integer")
   }
-  
+
   # Input validation
   numeric_inputs <- list(
     age = age,
@@ -91,42 +90,42 @@ clif_ad <- function(age, creatinine, inr,
     wbc = wbc,
     sodium = sodium
   )
-  
-  if(!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))){
+
+  if (!all(vapply(numeric_inputs, .is_numeric_or_na, logical(1)))) {
     stop("Age, creainine, inr, white blood cells and sodium must be numeric")
   }
-  
+
   .check_scalar_choice(units, c("SI", "US"), "unit")
-  
+
   # Input length validation
   input_lengths <- vapply(numeric_inputs, length, integer(1))
-  
-  if(any(input_lengths == 0L)) {
+
+  if (any(input_lengths == 0L)) {
     stop("Input vectors must contain at least one observation")
   }
-  
-  if(length(unique(input_lengths)) != 1L) {
+
+  if (length(unique(input_lengths)) != 1L) {
     stop("All patient-level input vectors must have the same length")
   }
-  
+
   missing <- is.na(age) | is.na(creatinine) | is.na(inr) |
     is.na(wbc) | is.na(sodium)
-  
+
   .warn_missing(missing)
-  
+
   # Creatinine transformation to mg/dL
-  
-  if(units == "SI") {
+
+  if (units == "SI") {
     creatinine <- creatinine * 0.0113
   }
-  
+
   clif_ad <- 10 * (
     0.03 * age +
-    0.66 * log(creatinine) +
-    1.71 * log(inr) + 
-    0.88 * log(wbc) -
-    0.05 * sodium + 8)
-  
+      0.66 * log(creatinine) +
+      1.71 * log(inr) +
+      0.88 * log(wbc) -
+      0.05 * sodium + 8)
+
   # Bounded between 0 and 100
   clif_ad <- pmin(pmax(clif_ad, 0), 100)
   round(clif_ad, digits = digits)
